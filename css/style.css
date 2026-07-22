@@ -108,12 +108,9 @@ body {
 .hero-icon {
   width: 72px;
   height: 72px;
-  background: #cfe3f5;
   border-radius: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 32px;
+  object-fit: cover;
+  box-shadow: var(--shadow);
 }
 
 .greeting {
