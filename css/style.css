@@ -305,35 +305,75 @@ body {
   text-align: center;
 }
 
-.commit-label { font-size: 13px; font-weight: 600; color: var(--navy); margin-bottom: 10px; }
+.commit-label { font-size: 13px; font-weight: 600; color: var(--navy); margin-bottom: 12px; }
 
-.commit-times {
+.time-field-row {
   display: flex;
-  justify-content: center;
   align-items: center;
-  gap: 8px;
-  font-size: 24px;
-  font-weight: 700;
-  color: #b7c2cd;
-  margin-bottom: 14px;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
 }
 
-.commit-time { min-width: 40px; }
-.commit-colon { color: #b7c2cd; }
-
-.alarm-chip {
-  background: var(--blue);
-  color: #fff;
-  border: none;
-  border-radius: 999px;
-  padding: 8px 16px;
+.time-field-label {
   font-size: 13px;
   font-weight: 600;
-  display: inline-flex;
+  color: var(--text);
+}
+
+.time-input {
+  border: none;
+  border-radius: 10px;
+  background: var(--card);
+  color: var(--navy);
+  font-size: 16px;
+  font-weight: 700;
+  font-family: inherit;
+  padding: 7px 10px;
+  text-align: center;
+}
+
+.time-input:disabled {
+  color: var(--text-sub);
+  opacity: 0.7;
+}
+
+.sunset-toggle-row {
+  display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 10px;
+  text-align: right;
+  font-size: 12.5px;
+  color: var(--text-sub);
+  margin: 14px 0 6px;
   cursor: pointer;
 }
+
+.switch-sm { width: 36px; height: 21px; flex-shrink: 0; }
+.switch-sm .slider::before { width: 15px; height: 15px; left: 3px; top: 3px; }
+.switch-sm input:checked + .slider::before { transform: translateX(15px); }
+
+.sunset-info {
+  background: var(--card);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 12.5px;
+  color: var(--navy);
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.sunset-info.hidden { display: none; }
+
+.reminder-time-row {
+  border-top: 1px solid rgba(0,0,0,0.06);
+  padding-top: 14px;
+  margin-top: 4px;
+  margin-bottom: 0;
+}
+
+.reminder-time-row .alarm-icon { font-size: 15px; }
 
 /* ---------- Stats ---------- */
 .stats-title {
@@ -625,6 +665,7 @@ body.dark .commit-times { color: #4b5b6b; }
 body.dark .settings-row { border-bottom-color: #232f3d; }
 body.dark .prayer-full { border-top-color: #232f3d; }
 body.dark .day-dot { border-color: #2a3646; }
+body.dark .reminder-time-row { border-top-color: rgba(255,255,255,0.08); }
 body.dark .share-sheet-panel { background: var(--card); }
 body.dark .share-option { background: var(--blue-light); color: var(--text); }
 

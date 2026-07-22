@@ -130,15 +130,32 @@
 
         <div class="commit-box">
           <div class="commit-label">בחר שעה למחויבות שלך</div>
-          <div class="commit-times">
-            <div class="commit-time" id="commit-end">20:07</div>
-            <span class="commit-colon">:</span>
-            <div class="commit-time" id="commit-start">06:15</div>
+
+          <div class="time-field-row">
+            <label class="time-field-label" for="commit-start-input">מ־שעה</label>
+            <input type="time" id="commit-start-input" class="time-input">
           </div>
-          <button class="alarm-chip" id="alarm-chip">
-            <span id="alarm-time">מתוזמן לשעה 08:30</span>
+
+          <div class="time-field-row">
+            <label class="time-field-label" for="commit-end-input">עד שעה</label>
+            <input type="time" id="commit-end-input" class="time-input">
+          </div>
+
+          <label class="sunset-toggle-row">
+            <label class="switch switch-sm">
+              <input type="checkbox" id="use-sunset-toggle">
+              <span class="slider"></span>
+            </label>
+            <span>עד השקיעה (מחושב אוטומטית לפי מיקום ותאריך)</span>
+          </label>
+
+          <div class="sunset-info hidden" id="sunset-info"></div>
+
+          <div class="time-field-row reminder-time-row">
+            <label class="time-field-label" for="reminder-time-input">שעת תזכורת</label>
+            <input type="time" id="reminder-time-input" class="time-input">
             <span class="alarm-icon">⏰</span>
-          </button>
+          </div>
         </div>
       </div>
 

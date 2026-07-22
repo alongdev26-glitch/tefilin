@@ -9,7 +9,9 @@
     reminderTime: "08:30",
     commitStart: "06:15",
     commitEnd: "20:07",
-    targetTime: "10:42",
+    useSunset: false,
+    lat: null,
+    lon: null,
     darkMode: false,
     log: {} // { "YYYY-MM-DD": "HH:MM" }
   };
@@ -44,6 +46,69 @@
   function nowHHMM() {
     var d = new Date();
     return pad(d.getHours()) + ":" + pad(d.getMinutes());
+  }
+
+  // ---------- Sunset calculation (Almanac for Computers 1990 algorithm) ----------
+  function dayOfYear(date) {
+    var start = new Date(date.getFullYear(), 0, 0);
+    return Math.floor((date - start) / 86400000);
+  }
+
+  function normalizeRange(value, max) {
+    while (value < 0) value += max;
+    while (value >= max) value -= max;
+    return value;
+  }
+
+  function calculateSunset(date, lat, lon) {
+    var toRad = Math.PI / 180;
+    var toDeg = 180 / Math.PI;
+    var zenith = 90.8333;
+
+    var N = dayOfYear(date);
+    var lngHour = lon / 15;
+    var t = N + ((18 - lngHour) / 24);
+
+    var M = (0.9856 * t) - 3.289;
+    var Mrad = M * toRad;
+    var L = M + (1.916 * Math.sin(Mrad)) + (0.020 * Math.sin(2 * Mrad)) + 282.634;
+    L = normalizeRange(L, 360);
+    var Lrad = L * toRad;
+
+    var RA = toDeg * Math.atan(0.91764 * Math.tan(Lrad));
+    RA = normalizeRange(RA, 360);
+    var Lquadrant = Math.floor(L / 90) * 90;
+    var RAquadrant = Math.floor(RA / 90) * 90;
+    RA = (RA + (Lquadrant - RAquadrant)) / 15;
+
+    var sinDec = 0.39782 * Math.sin(Lrad);
+    var cosDec = Math.cos(Math.asin(sinDec));
+    var cosH = (Math.cos(zenith * toRad) - (sinDec * Math.sin(lat * toRad))) /
+      (cosDec * Math.cos(lat * toRad));
+
+    if (cosH > 1 || cosH < -1) return null;
+
+    var H = toDeg * Math.acos(cosH);
+    H = H / 15;
+
+    var T = H + RA - (0.06571 * t) - 6.622;
+    var UT = normalizeRange(T - lngHour, 24);
+
+    var localOffsetHours = -date.getTimezoneOffset() / 60;
+    var localT = normalizeRange(UT + localOffsetHours, 24);
+
+    var hours = Math.floor(localT);
+    var minutes = Math.round((localT - hours) * 60);
+    if (minutes === 60) { minutes = 0; hours = (hours + 1) % 24; }
+    return pad(hours) + ":" + pad(minutes);
+  }
+
+  function getDeadlineTime() {
+    if (state.useSunset && state.lat != null && state.lon != null) {
+      var sunset = calculateSunset(new Date(), state.lat, state.lon);
+      if (sunset) return sunset;
+    }
+    return state.commitEnd;
   }
 
   // ---------- Navigation ----------
@@ -173,7 +238,6 @@
   // ---------- Home screen ----------
   var greetingEl = document.getElementById("greeting-text");
   var statusEl = document.getElementById("status-text");
-  var targetTimeEl = document.getElementById("target-time");
   var layBtn = document.getElementById("lay-btn");
   var layBtnLabel = document.getElementById("lay-btn-label");
   var layBtnArrow = document.getElementById("lay-btn-arrow");
@@ -189,7 +253,6 @@
   function renderHome() {
     var hour = new Date().getHours();
     greetingEl.textContent = greetingForHour(hour);
-    targetTimeEl.textContent = state.targetTime;
 
     var laidToday = !!state.log[todayKey()];
     if (laidToday) {
@@ -200,7 +263,7 @@
       layBtnArrow.textContent = "✓";
     } else {
       statusEl.innerHTML = "זמן הנחת תפילין עד השעה " +
-        "<span id=\"target-time\">" + state.targetTime + "</span>. האם כבר הנחתם?";
+        "<span id=\"target-time\">" + getDeadlineTime() + "</span>. האם כבר הנחתם?";
       layBtn.classList.remove("done");
       layBtnLabel.textContent = "הנח תפילין";
       layBtnArrow.textContent = "◂";
@@ -413,16 +476,33 @@
 
   // ---------- Reminders ----------
   var reminderEnabledEl = document.getElementById("reminder-enabled");
-  var commitStartEl = document.getElementById("commit-start");
-  var commitEndEl = document.getElementById("commit-end");
-  var alarmTimeEl = document.getElementById("alarm-time");
-  var alarmChip = document.getElementById("alarm-chip");
+  var commitStartInput = document.getElementById("commit-start-input");
+  var commitEndInput = document.getElementById("commit-end-input");
+  var reminderTimeInput = document.getElementById("reminder-time-input");
+  var useSunsetToggle = document.getElementById("use-sunset-toggle");
+  var sunsetInfoEl = document.getElementById("sunset-info");
 
   function renderReminders() {
     reminderEnabledEl.checked = state.reminderEnabled;
-    commitStartEl.textContent = state.commitStart;
-    commitEndEl.textContent = state.commitEnd;
-    alarmTimeEl.textContent = "מתוזמן לשעה " + state.reminderTime;
+    commitStartInput.value = state.commitStart;
+    commitEndInput.value = state.commitEnd;
+    reminderTimeInput.value = state.reminderTime;
+    useSunsetToggle.checked = state.useSunset;
+    commitEndInput.disabled = state.useSunset;
+
+    if (state.useSunset) {
+      if (state.lat != null && state.lon != null) {
+        var sunset = calculateSunset(new Date(), state.lat, state.lon);
+        sunsetInfoEl.textContent = sunset
+          ? "🌇 שקיעה מחושבת להיום: " + sunset
+          : "לא ניתן לחשב שקיעה במיקום זה";
+      } else {
+        sunsetInfoEl.textContent = "ממתין להרשאת מיקום...";
+      }
+      sunsetInfoEl.classList.remove("hidden");
+    } else {
+      sunsetInfoEl.classList.add("hidden");
+    }
   }
 
   reminderEnabledEl.addEventListener("change", function () {
@@ -431,18 +511,55 @@
     if (state.reminderEnabled) requestNotificationPermission();
   });
 
-  alarmChip.addEventListener("click", function () {
-    var input = prompt("הגדר שעת תזכורת (HH:MM)", state.reminderTime);
-    if (!input) return;
-    if (!/^\d{1,2}:\d{2}$/.test(input)) {
-      showToast("פורמט שעה לא תקין");
-      return;
-    }
-    state.reminderTime = input;
-    state.targetTime = input;
+  commitStartInput.addEventListener("change", function () {
+    if (!commitStartInput.value) return;
+    state.commitStart = commitStartInput.value;
     saveState();
-    renderReminders();
-    showToast("התזכורת עודכנה ל-" + input);
+    renderHome();
+  });
+
+  commitEndInput.addEventListener("change", function () {
+    if (!commitEndInput.value) return;
+    state.commitEnd = commitEndInput.value;
+    saveState();
+    renderHome();
+  });
+
+  reminderTimeInput.addEventListener("change", function () {
+    if (!reminderTimeInput.value) return;
+    state.reminderTime = reminderTimeInput.value;
+    saveState();
+    showToast("שעת התזכורת עודכנה ל-" + state.reminderTime);
+  });
+
+  useSunsetToggle.addEventListener("change", function () {
+    if (useSunsetToggle.checked) {
+      if (!("geolocation" in navigator)) {
+        showToast("הדפדפן לא תומך באיתור מיקום");
+        useSunsetToggle.checked = false;
+        return;
+      }
+      navigator.geolocation.getCurrentPosition(
+        function (pos) {
+          state.lat = pos.coords.latitude;
+          state.lon = pos.coords.longitude;
+          state.useSunset = true;
+          saveState();
+          renderReminders();
+          renderHome();
+          showToast("מיקום אותר - השקיעה תחושב אוטומטית");
+        },
+        function () {
+          showToast("לא ניתן לגשת למיקום - בדוק הרשאות מיקום בדפדפן");
+          useSunsetToggle.checked = false;
+        }
+      );
+    } else {
+      state.useSunset = false;
+      saveState();
+      renderReminders();
+      renderHome();
+    }
   });
 
   // ---------- Notifications (best-effort, foreground only) ----------
