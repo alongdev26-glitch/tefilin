@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>תזכורת תפילין</title>
+<meta name="theme-color" content="#154a7a">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="phone">
+
+  <!-- ===== HOME ===== -->
+  <section class="screen" id="screen-home">
+    <header class="topbar">
+      <button class="icon-btn" aria-label="תפריט"><span class="dots">⋮</span></button>
+      <h1 class="topbar-title">בית</h1>
+      <button class="icon-btn" aria-label="תפריט נוסף">☰</button>
+    </header>
+
+    <div class="content">
+      <div class="hero-icon-wrap">
+        <div class="hero-icon">🙏🏻</div>
+      </div>
+
+      <h2 class="greeting" id="greeting-text">בוקר טוב</h2>
+      <p class="greeting-sub" id="status-text">זמן הנחת תפילין עד השעה <span id="target-time">10:42</span>. האם כבר הנחתם?</p>
+
+      <button class="cta-btn" id="lay-btn">
+        <span id="lay-btn-label">הנח תפילין</span>
+        <span class="cta-arrow" id="lay-btn-arrow">◂</span>
+      </button>
+
+      <div class="section-row">
+        <a href="#" class="link-see-all" data-nav="stats">ראה הכל</a>
+        <h3 class="section-title">תפילה יומית</h3>
+      </div>
+
+      <div class="card prayer-card expandable" data-prayer="shema">
+        <div class="prayer-card-head">
+          <span class="book-icon">📖</span>
+          <span class="prayer-card-title">קריאת שמע</span>
+          <span class="prayer-toggle">הצג הכל ⌄</span>
+        </div>
+        <p class="prayer-line-main">שְׁמַע יִשְׂרָאֵל יְהֹוָה אֱלֹהֵינוּ יְהֹוָה אֶחָד:</p>
+        <p class="prayer-line-note">(בלחש: ברוך שם כבוד מלכותו לעולם ועד)</p>
+        <p class="prayer-line-body">
+          וְאָהַבְתָּ אֵת יְהֹוָה אֱלֹהֶיךָ בְּכָל לְבָבְךָ וּבְכָל
+          נַפְשְׁךָ וּבְכָל מְאֹדֶךָ: וְהָיוּ הַדְּבָרִים הָאֵלֶּה
+        </p>
+        <div class="prayer-full hidden" id="shema-full"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== LAY TEFILLIN (PRAYER FLOW) ===== -->
+  <section class="screen hidden" id="screen-prayer">
+    <header class="topbar">
+      <button class="icon-btn" id="prayer-close" aria-label="חזרה">✕</button>
+      <h1 class="topbar-title">הנחת תפילין</h1>
+      <span class="icon-btn" style="visibility:hidden">✕</span>
+    </header>
+
+    <div class="content prayer-content">
+      <div class="card prayer-card expandable" data-prayer="shema">
+        <div class="prayer-card-head">
+          <span class="book-icon">📖</span>
+          <span class="prayer-card-title">קריאת שמע</span>
+          <span class="prayer-toggle">הצג הכל ⌄</span>
+        </div>
+        <p class="prayer-line-main">שְׁמַע יִשְׂרָאֵל יְהֹוָה אֱלֹהֵינוּ יְהֹוָה אֶחָד:</p>
+        <p class="prayer-line-note">(בלחש: ברוך שם כבוד מלכותו לעולם ועד)</p>
+        <p class="prayer-line-body">
+          וְאָהַבְתָּ אֵת יְהֹוָה אֱלֹהֶיךָ בְּכָל לְבָבְךָ וּבְכָל נַפְשְׁךָ
+          וּבְכָל מְאֹדֶךָ: וְהָיוּ הַדְּבָרִים הָאֵלֶּה אֲשֶׁר אָנֹכִי מְצַוְּךָ
+          הַיּוֹם עַל לְבָבֶךָ:
+        </p>
+        <div class="prayer-full hidden" id="shema-full-2"></div>
+      </div>
+
+      <div class="card prayer-card expandable" data-prayer="amidah">
+        <div class="prayer-card-head">
+          <span class="book-icon">🕍</span>
+          <span class="prayer-card-title">עמידה</span>
+          <span class="prayer-toggle">הצג הכל ⌄</span>
+        </div>
+        <p class="prayer-line-note">(פותחים בלחש, שלוש פסיעות לאחור ואז לפנים)</p>
+        <p class="prayer-line-body">
+          אֲדֹנָי שְׂפָתַי תִּפְתָּח וּפִי יַגִּיד תְּהִלָּתֶךָ:
+        </p>
+        <p class="prayer-line-body">
+          בָּרוּךְ אַתָּה יְהֹוָה אֱלֹהֵינוּ וֵאלֹהֵי אֲבוֹתֵינוּ, אֱלֹהֵי
+          אַבְרָהָם אֱלֹהֵי יִצְחָק וֵאלֹהֵי יַעֲקֹב, הָאֵל הַגָּדוֹל הַגִּבּוֹר
+          וְהַנּוֹרָא, אֵל עֶלְיוֹן, גּוֹמֵל חֲסָדִים טוֹבִים וְקֹנֵה הַכֹּל.
+        </p>
+        <div class="prayer-full hidden" id="amidah-full"></div>
+      </div>
+
+      <button class="cta-btn done-btn" id="confirm-lay-btn">
+        <span>הנחתי</span>
+        <span class="cta-arrow">◂</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ===== REMINDERS ===== -->
+  <section class="screen hidden" id="screen-reminders">
+    <header class="topbar">
+      <button class="icon-btn" aria-label="תפריט"><span class="dots">⋮</span></button>
+      <h1 class="topbar-title">תזכורת יומית</h1>
+      <button class="icon-btn" aria-label="תפריט נוסף">☰</button>
+    </header>
+    <div class="content">
+      <div class="hero-photo"></div>
+
+      <div class="card toggle-card">
+        <div class="toggle-row">
+          <label class="switch">
+            <input type="checkbox" id="reminder-enabled">
+            <span class="slider"></span>
+          </label>
+          <div class="toggle-text">
+            <div class="toggle-title">הפעל תזכורת</div>
+            <div class="toggle-sub">קבל התראה יומית להנחת תפילין</div>
+          </div>
+        </div>
+
+        <div class="commit-box">
+          <div class="commit-label">בחר שעה למחויבות שלך</div>
+          <div class="commit-times">
+            <div class="commit-time" id="commit-end">20:07</div>
+            <span class="commit-colon">:</span>
+            <div class="commit-time" id="commit-start">06:15</div>
+          </div>
+          <button class="alarm-chip" id="alarm-chip">
+            <span id="alarm-time">מתוזמן לשעה 08:30</span>
+            <span class="alarm-icon">⏰</span>
+          </button>
+        </div>
+      </div>
+
+      <h3 class="section-title standalone">למה חשוב לזכור?</h3>
+      <p class="body-text">
+        מצוות תפילין היא אחת המצוות המרכזיות ביהדות, ומומלץ להניחן בכל
+        יום חול מוקדם בבוקר, מתוך שמחה וכוונה.
+      </p>
+    </div>
+  </section>
+
+  <!-- ===== STATS ===== -->
+  <section class="screen hidden" id="screen-stats">
+    <header class="topbar">
+      <button class="icon-btn" aria-label="פרופיל">👤</button>
+      <h1 class="topbar-title">סטטיסטיקה ומעקב</h1>
+      <button class="icon-btn" aria-label="תפריט נוסף">☰</button>
+    </header>
+    <div class="content">
+      <h2 class="stats-title">ההתקדמות שלך</h2>
+      <p class="stats-subtitle">מעקב שבועי וחודשי אחר מצוות התפילין</p>
+
+      <div class="card monthly-card">
+        <div class="card-title">ביצוע חודשי</div>
+        <div class="ring-wrap">
+          <div class="ring" id="monthly-ring">
+            <div class="ring-center">
+              <div class="ring-percent" id="monthly-percent">75%</div>
+              <div class="ring-days"><span id="monthly-count">22</span>/<span id="monthly-total">30</span> ימים</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card week-card">
+        <div class="card-title">השבוע שלי</div>
+        <div class="week-row" id="week-row"></div>
+      </div>
+
+      <div class="card tip-card">
+        <div class="tip-head">💡 טיפ יומי להשראה</div>
+        <p class="tip-quote">"הנחת תפילין מחברת אותנו למקור הכוח שלנו, וממשרת את הלב והמוח למטרה אחת קדושה."</p>
+        <button class="pill-btn" id="share-inspiration">שתף השראה</button>
+      </div>
+
+      <div class="stat-grid">
+        <div class="card stat-box">
+          <div class="stat-value" id="avg-time">07:15</div>
+          <div class="stat-label">ממוצע שעה</div>
+          <span class="stat-emoji">🕐</span>
+        </div>
+        <div class="card stat-box">
+          <div class="stat-value" id="streak-count">12</div>
+          <div class="stat-label">רצף ימים נוכחי</div>
+          <span class="stat-emoji">🎖️</span>
+        </div>
+      </div>
+
+      <div class="quote-banner">
+        <span>"ואהבת את ה' אלוקיך בכל לבבך ובכל נפשך..."</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SETTINGS ===== -->
+  <section class="screen hidden" id="screen-settings">
+    <header class="topbar">
+      <button class="icon-btn" aria-label="תפריט"><span class="dots">⋮</span></button>
+      <h1 class="topbar-title">פרופיל והגדרות</h1>
+      <button class="icon-btn" aria-label="תפריט נוסף">☰</button>
+    </header>
+    <div class="content">
+      <div class="card profile-card">
+        <div class="profile-photo">👩🏻‍💼</div>
+        <div class="profile-text">
+          <div class="profile-greeting">שלום, <span id="profile-name">ישראל ישראלי</span></div>
+          <div class="profile-sub"><span id="profile-streak">42</span> ימים ברצף • המסע הרוחני שלי</div>
+        </div>
+      </div>
+
+      <div class="card level-card">
+        <div class="level-badge">🏅</div>
+        <div class="level-label">רמת חסידות</div>
+        <div class="level-value" id="level-value">זהב</div>
+      </div>
+
+      <div class="section-row solo">
+        <h3 class="section-title">הגדרות יישום</h3>
+      </div>
+
+      <div class="card settings-list">
+        <div class="settings-row">
+          <label class="switch">
+            <input type="checkbox" id="dark-mode-toggle">
+            <span class="slider"></span>
+          </label>
+          <div class="settings-row-text">מצב כהה / בהיר</div>
+          <span class="settings-icon">🌙</span>
+        </div>
+        <div class="settings-row" id="share-app-row">
+          <span class="chevron">‹</span>
+          <div class="settings-row-text">שיתוף אפליקציה<br><small>הזמן חברים להנחת תפילין</small></div>
+          <span class="settings-icon">🔗</span>
+        </div>
+        <div class="settings-row" data-nav="reminders">
+          <span class="chevron">‹</span>
+          <div class="settings-row-text">תזכורות וזמנים</div>
+          <span class="settings-icon">🔔</span>
+        </div>
+        <div class="settings-row" data-nav="none">
+          <span class="chevron">‹</span>
+          <div class="settings-row-text">אודות<br><small>גרסה 1.0.0 • תפילין קומפניון</small></div>
+          <span class="settings-icon">ℹ️</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== BOTTOM NAV ===== -->
+  <nav class="bottom-nav">
+    <button class="nav-btn" data-nav="settings">
+      <span class="nav-icon">⚙️</span><span class="nav-label">Settings</span>
+    </button>
+    <button class="nav-btn" data-nav="stats">
+      <span class="nav-icon">📊</span><span class="nav-label">Stats</span>
+    </button>
+    <button class="nav-btn" data-nav="reminders">
+      <span class="nav-icon">⏰</span><span class="nav-label">Reminders</span>
+    </button>
+    <button class="nav-btn active" data-nav="home">
+      <span class="nav-icon">🏠</span><span class="nav-label">Home</span>
+    </button>
+  </nav>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="share-sheet hidden" id="share-sheet">
+  <div class="share-sheet-backdrop" id="share-sheet-backdrop"></div>
+  <div class="share-sheet-panel">
+    <div class="share-sheet-title">שיתוף</div>
+    <div class="share-options">
+      <a class="share-option" id="share-whatsapp" target="_blank" rel="noopener">
+        <span class="share-emoji">💬</span><span>WhatsApp</span>
+      </a>
+      <a class="share-option" id="share-facebook" target="_blank" rel="noopener">
+        <span class="share-emoji">📘</span><span>Facebook</span>
+      </a>
+      <a class="share-option" id="share-twitter" target="_blank" rel="noopener">
+        <span class="share-emoji">🐦</span><span>Twitter / X</span>
+      </a>
+      <button class="share-option" id="share-instagram" type="button">
+        <span class="share-emoji">📸</span><span>Instagram</span>
+      </button>
+      <button class="share-option" id="share-copy" type="button">
+        <span class="share-emoji">📋</span><span>העתק טקסט</span>
+      </button>
+    </div>
+    <button class="share-cancel" id="share-cancel" type="button">ביטול</button>
+  </div>
+</div>
+
+<script src="js/app.js"></script>
+</body>
+</html>
