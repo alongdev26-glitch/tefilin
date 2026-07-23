@@ -173,6 +173,13 @@ body {
   box-shadow: 0 4px 14px rgba(46,158,91,0.35);
 }
 
+.cta-btn:disabled {
+  background: var(--ink-light);
+  color: var(--text-sub);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
 .cta-arrow { font-size: 14px; }
 
 .level-progress-card {

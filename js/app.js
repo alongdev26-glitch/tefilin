@@ -415,6 +415,7 @@
     greetingEl.textContent = greetingForHour(hour);
 
     var laidToday = !!state.log[todayKey()];
+    layBtn.disabled = laidToday;
     if (laidToday) {
       statusEl.innerHTML = "כל הכבוד! הנחתם תפילין היום בשעה " +
         "<span id=\"target-time\">" + state.log[todayKey()] + "</span>.";
@@ -434,13 +435,7 @@
 
   layBtn.addEventListener("click", function () {
     var key = todayKey();
-    if (state.log[key]) {
-      delete state.log[key];
-      saveState();
-      renderHome();
-      showToast("הסימון הוסר");
-      return;
-    }
+    if (state.log[key]) return;
     if (!state.nusach) {
       openNusachPicker("home");
       return;
