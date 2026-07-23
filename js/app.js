@@ -356,14 +356,29 @@
   var levelProgressNextEl = document.getElementById("level-progress-next");
 
   // ---------- Devotion level tiers (purchased with coins) ----------
+  var TIER_ICON_SHUL =
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M4 21V10l8-6 8 6v11"/><path d="M9 21v-7M12 21v-7M15 21v-7"/></svg>';
+  var TIER_ICON_SUN =
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 3v2.5M12 18.5V21M21 12h-2.5M5.5 12H3M18.4 5.6l-1.7 1.7M7.3 16.7l-1.7 1.7M18.4 18.4l-1.7-1.7M7.3 7.3 5.6 5.6"/></svg>';
+  var TIER_ICON_BOOK =
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6c-1.5-1.2-4-1.8-7-1.8v13.6c3 0 5.5.6 7 1.8"/><path d="M12 6c1.5-1.2 4-1.8 7-1.8v13.6c-3 0-5.5.6-7 1.8"/><path d="M12 6v13.6"/></svg>';
+  var TIER_ICON_CAP =
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4 2 9l10 5 10-5-10-5Z"/><path d="M6 11.5V17c0 1.5 2.5 3 6 3s6-1.5 6-3v-5.5"/></svg>';
+  var TIER_ICON_SCALES =
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v17M8 20h8"/><path d="M4 7h6M14 7h6"/><path d="M4 7 1.5 12a2.7 2.7 0 0 0 5 0L4 7Z"/><path d="M20 7 17.5 12a2.7 2.7 0 0 0 5 0L20 7Z"/></svg>';
+  var TIER_ICON_SPARKLE =
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v4M12 17v4M3 12h4M17 12h4"/><path d="M6 6l2.5 2.5M15.5 15.5 18 18M18 6l-2.5 2.5M8.5 15.5 6 18"/></svg>';
+  var TIER_ICON_CROWN =
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18h16M4.5 18 3 8l5 4 4-6 4 6 5-4-1.5 10"/></svg>';
+
   var LEVEL_TIERS = [
-    { name: "בית הכנסת", flavor: "הולך לבית כנסת עם כיפה בשבת", price: 0 },
-    { name: "שחרית", flavor: "הולך להתפלל שחרית כל בוקר", price: 500 },
-    { name: "לומד תורה", flavor: "לומד תורה מדי יום", price: 1000 },
-    { name: "מרביץ תורה", flavor: "מרביץ תורה ומלמד אחרים", price: 2500 },
-    { name: "מוסיף לשם", flavor: "מוסיף קדושה וכבוד לשם שמים בכל מעשיו", price: 5000 },
-    { name: "מטאור", flavor: "מועמד לרשות הסנהדרין", price: 10000 },
-    { name: "רבינו הגדול", flavor: "פסגת המסע הרוחני", price: 25000 }
+    { name: "בית הכנסת", flavor: "הולך לבית כנסת עם כיפה בשבת", price: 0, icon: TIER_ICON_SHUL },
+    { name: "שחרית", flavor: "הולך להתפלל שחרית כל בוקר", price: 500, icon: TIER_ICON_SUN },
+    { name: "לומד תורה", flavor: "קביעת עיתים לתורה", price: 1000, icon: TIER_ICON_BOOK },
+    { name: "חכם", flavor: "מרביץ תורה ומלמד אחרים", price: 2500, icon: TIER_ICON_CAP },
+    { name: "מועמד לרשות הסנהדרין", flavor: "מנהיגות רוחנית עליונה", price: 5000, icon: TIER_ICON_SCALES },
+    { name: "מטאור", flavor: "כוכב זורח, נדיר ומאיר דרך לאחרים", price: 10000, icon: TIER_ICON_SPARKLE },
+    { name: "רבינו הגדול", flavor: "פסגת המסע הרוחני", price: 25000, icon: TIER_ICON_CROWN }
   ];
 
   function getCurrentTier() { return LEVEL_TIERS[state.purchasedTierIndex]; }
@@ -505,27 +520,36 @@
   // ---------- Shop ----------
   var shopTierListEl = document.getElementById("shop-tier-list");
 
+  var COIN_ICON_SVG =
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5v9M9.5 9.5c0-1 .8-1.5 2.5-1.5s2.5.6 2.5 1.5-1 1.3-2.5 1.5c-1.7.2-2.5.6-2.5 1.5s.8 1.5 2.5 1.5 2.5-.5 2.5-1.5"/></svg>';
+  var CHECK_ICON_SVG =
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 6"/></svg>';
+  var LOCK_ICON_SVG =
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="10.5" width="14" height="9" rx="1.5"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/></svg>';
+
   function renderShop() {
     var html = "";
     LEVEL_TIERS.forEach(function (tier, i) {
       var owned = i <= state.purchasedTierIndex;
       var isNext = i === state.purchasedTierIndex + 1;
       var stateClass = owned ? "owned" : (isNext ? "next" : "locked");
-      var actionHtml;
+      var priceHtml;
       if (owned) {
-        actionHtml = '<span class="shop-tier-status shop-tier-owned">בבעלותך ✓</span>';
+        priceHtml = '<span class="shop-tier-price shop-tier-owned">' + CHECK_ICON_SVG + '</span>';
       } else if (isNext) {
         var afford = state.coins >= tier.price;
-        actionHtml = '<button class="pill-btn shop-buy-btn" data-tier-index="' + i + '"' + (afford ? "" : " disabled") + '>קנה ב-' + tier.price + ' מטבעות</button>';
+        priceHtml = '<button class="shop-tier-price shop-buy-btn" data-tier-index="' + i + '"' + (afford ? "" : " disabled") + '>' + COIN_ICON_SVG + '<span>' + tier.price + '</span></button>';
       } else {
-        actionHtml = '<span class="shop-tier-status shop-tier-locked">נעול</span>';
+        priceHtml = '<span class="shop-tier-price shop-tier-locked">' + LOCK_ICON_SVG + '</span>';
       }
       var nameHtml = (owned || isNext) ? tier.name : "?";
       var flavorHtml = (owned || isNext) ? tier.flavor : "המשיכו להתקדם כדי לגלות את הדרגה הבאה";
-      html += '<div class="card shop-tier-card ' + stateClass + '">' +
-        '<div class="shop-tier-name">' + nameHtml + '</div>' +
-        '<div class="shop-tier-flavor">' + flavorHtml + '</div>' +
-        actionHtml + '</div>';
+      var iconHtml = (owned || isNext) ? tier.icon : LOCK_ICON_SVG;
+      html += '<div class="card shop-tier-row ' + stateClass + '">' +
+        '<div class="shop-tier-icon">' + iconHtml + '</div>' +
+        '<div class="shop-tier-text"><div class="shop-tier-name">' + nameHtml + '</div>' +
+        '<div class="shop-tier-flavor">' + flavorHtml + '</div></div>' +
+        priceHtml + '</div>';
     });
     shopTierListEl.innerHTML = html;
     shopTierListEl.querySelectorAll(".shop-buy-btn").forEach(function (btn) {
