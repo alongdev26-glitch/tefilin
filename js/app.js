@@ -300,6 +300,47 @@
   var layBtn = document.getElementById("lay-btn");
   var layBtnLabel = document.getElementById("lay-btn-label");
   var layBtnArrow = document.getElementById("lay-btn-arrow");
+  var levelProgressCurrentEl = document.getElementById("level-progress-current");
+  var levelProgressBarEl = document.getElementById("level-progress-bar");
+  var levelProgressNextEl = document.getElementById("level-progress-next");
+
+  // ---------- Devotion level tiers ----------
+  var LEVEL_TIERS = [
+    { name: "ברונזה", threshold: 0 },
+    { name: "כסף", threshold: 7 },
+    { name: "זהב", threshold: 30 },
+    { name: "יהלום", threshold: 180 },
+    { name: "פלטינום", threshold: 365 }
+  ];
+
+  function getLevelInfo(streak) {
+    var current = LEVEL_TIERS[0];
+    var next = null;
+    for (var i = 0; i < LEVEL_TIERS.length; i++) {
+      if (streak >= LEVEL_TIERS[i].threshold) {
+        current = LEVEL_TIERS[i];
+        next = LEVEL_TIERS[i + 1] || null;
+      }
+    }
+    return { current: current, next: next };
+  }
+
+  function renderLevelProgress() {
+    var streak = computeStreak();
+    var info = getLevelInfo(streak);
+    levelProgressCurrentEl.textContent = info.current.name;
+
+    if (info.next) {
+      var span = info.next.threshold - info.current.threshold;
+      var progress = Math.min(100, Math.round(((streak - info.current.threshold) / span) * 100));
+      levelProgressBarEl.style.width = progress + "%";
+      var daysLeft = info.next.threshold - streak;
+      levelProgressNextEl.textContent = "עוד " + daysLeft + " ימים רצופים לרמת " + info.next.name;
+    } else {
+      levelProgressBarEl.style.width = "100%";
+      levelProgressNextEl.textContent = "הגעת לרמה הגבוהה ביותר!";
+    }
+  }
 
   function greetingForHour(h) {
     if (h < 5) return "לילה טוב";
@@ -327,6 +368,8 @@
       layBtnLabel.textContent = "הנח תפילין";
       layBtnArrow.textContent = "◂";
     }
+
+    renderLevelProgress();
   }
 
   layBtn.addEventListener("click", function () {
@@ -573,9 +616,7 @@
   var nusachSettingsValueEl = document.getElementById("nusach-settings-value");
 
   function levelForStreak(streak) {
-    if (streak >= 30) return "זהב";
-    if (streak >= 7) return "כסף";
-    return "ברונזה";
+    return getLevelInfo(streak).current.name;
   }
 
   function renderSettings() {

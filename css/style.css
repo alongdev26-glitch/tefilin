@@ -175,6 +175,39 @@ body {
 
 .cta-arrow { font-size: 14px; }
 
+.level-progress-card {
+  margin-top: 22px;
+  text-align: center;
+}
+
+.level-progress-current {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 12px;
+}
+
+.level-progress-bar-wrap {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--blue-light);
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.level-progress-bar {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--blue);
+  width: 0%;
+  transition: width 0.4s;
+}
+
+.level-progress-next {
+  font-size: 12.5px;
+  color: var(--text-sub);
+}
+
 .onboarding-content {
   display: flex;
   flex-direction: column;
