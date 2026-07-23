@@ -43,6 +43,22 @@ body {
   position: relative;
 }
 
+/* ---------- Full-bleed on mobile / installed PWA ---------- */
+@media (max-width: 480px), (display-mode: standalone) {
+  body {
+    padding: 0;
+    align-items: stretch;
+  }
+  .phone {
+    width: 100%;
+    max-width: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+    border-radius: 0;
+    box-shadow: none;
+  }
+}
+
 .screen {
   display: flex;
   flex-direction: column;
@@ -76,13 +92,14 @@ body {
   background: none;
   border: none;
   color: #fff;
-  font-size: 20px;
   cursor: pointer;
   padding: 4px 8px;
   line-height: 1;
 }
 
-.dots { display: inline-block; transform: rotate(90deg); font-weight: bold; }
+.icon-btn svg { width: 20px; height: 20px; display: block; }
+
+.dots { display: inline-flex; }
 
 /* ---------- Content ---------- */
 .content {
@@ -155,6 +172,54 @@ body {
 
 .cta-arrow { font-size: 14px; }
 
+.onboarding-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: stretch;
+  text-align: center;
+  gap: 14px;
+  flex: 1;
+}
+
+.onboarding-input {
+  width: 100%;
+  border: 1px solid #d3d9df;
+  border-radius: 12px;
+  padding: 14px 16px;
+  font-size: 16px;
+  font-family: inherit;
+  text-align: center;
+  color: var(--text);
+  background: var(--card);
+}
+
+.nusach-intro { margin: 4px 0 4px; text-align: center; }
+
+.nusach-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.nusach-option {
+  width: 100%;
+  background: var(--card);
+  border: 1px solid var(--blue-light);
+  border-radius: 14px;
+  padding: 16px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--navy);
+  cursor: pointer;
+  box-shadow: var(--shadow);
+  text-align: center;
+  font-family: inherit;
+}
+
+.nusach-option:active { transform: scale(0.98); }
+
 .section-row {
   display: flex;
   align-items: baseline;
@@ -184,6 +249,9 @@ body {
   gap: 8px;
   margin-bottom: 10px;
 }
+
+.book-icon { display: flex; color: var(--blue); flex-shrink: 0; }
+.book-icon svg { width: 20px; height: 20px; }
 
 .expandable .prayer-card-head {
   cursor: pointer;
@@ -381,7 +449,13 @@ body {
   font-weight: 600;
   text-align: center;
   margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
 }
+
+.inline-icon { width: 16px; height: 16px; flex-shrink: 0; vertical-align: middle; }
 
 .sunset-info.hidden { display: none; }
 
@@ -392,7 +466,8 @@ body {
   margin-bottom: 0;
 }
 
-.reminder-time-row .alarm-icon { font-size: 15px; }
+.reminder-time-row .alarm-icon { display: flex; color: var(--blue); }
+.reminder-time-row .alarm-icon svg { width: 17px; height: 17px; }
 
 /* ---------- Stats ---------- */
 .stats-title {
@@ -500,7 +575,14 @@ body {
 .day-letter.today { color: var(--navy); }
 
 .tip-card { margin-bottom: 16px; background: var(--navy); color: #fff; }
-.tip-head { font-weight: 700; margin-bottom: 8px; }
+.tip-head {
+  font-weight: 700;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.tip-head .inline-icon { width: 18px; height: 18px; flex-shrink: 0; }
 .tip-quote { font-size: 13.5px; line-height: 1.6; font-style: italic; margin: 0 0 14px; }
 
 .pill-btn {
@@ -528,7 +610,8 @@ body {
 
 .stat-value { font-size: 20px; font-weight: 700; color: var(--navy); }
 .stat-label { font-size: 12px; color: var(--text-sub); margin-top: 4px; }
-.stat-emoji { position: absolute; top: 12px; left: 12px; font-size: 16px; }
+.stat-emoji { position: absolute; top: 12px; left: 12px; color: var(--text-sub); display: flex; }
+.stat-emoji svg { width: 16px; height: 16px; }
 
 .quote-banner {
   background: linear-gradient(135deg, #2b241f, #4a3c30);
@@ -556,9 +639,11 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 26px;
+  color: var(--blue);
   flex-shrink: 0;
 }
+
+.profile-photo svg { width: 28px; height: 28px; }
 
 .profile-greeting { font-weight: 700; color: var(--navy); font-size: 15px; }
 .profile-sub { font-size: 12px; color: var(--text-sub); margin-top: 3px; }
@@ -571,7 +656,8 @@ body {
   margin-bottom: 8px;
 }
 
-.level-badge { font-size: 30px; margin-bottom: 8px; }
+.level-badge { display: flex; justify-content: center; margin-bottom: 8px; }
+.level-badge svg { width: 32px; height: 32px; }
 .level-label { font-size: 13px; opacity: 0.85; margin-bottom: 4px; }
 .level-value { font-size: 20px; font-weight: 700; }
 
@@ -599,8 +685,11 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 15px;
+  color: var(--blue);
+  flex-shrink: 0;
 }
+
+.settings-icon svg { width: 18px; height: 18px; }
 
 .chevron { color: #c3cbd3; font-size: 18px; }
 
@@ -642,10 +731,10 @@ body {
   cursor: pointer;
 }
 
-.nav-icon { font-size: 19px; filter: grayscale(1); opacity: 0.6; }
+.nav-icon { display: flex; }
+.nav-icon svg { width: 21px; height: 21px; }
 
 .nav-btn.active { color: var(--blue); }
-.nav-btn.active .nav-icon { filter: none; opacity: 1; }
 
 /* ---------- Toast ---------- */
 .toast {
@@ -687,6 +776,8 @@ body.dark .day-dot { border-color: #2a3646; }
 body.dark .reminder-time-row { border-top-color: rgba(255,255,255,0.08); }
 body.dark .share-sheet-panel { background: var(--card); }
 body.dark .share-option { background: var(--blue-light); color: var(--text); }
+body.dark .onboarding-input { border-color: #2a3646; }
+body.dark .nusach-option { border-color: #2a3646; }
 
 /* ---------- Share sheet ---------- */
 .share-sheet {
@@ -746,7 +837,8 @@ body.dark .share-option { background: var(--blue-light); color: var(--text); }
   cursor: pointer;
 }
 
-.share-emoji { font-size: 22px; }
+.share-emoji { display: flex; }
+.share-emoji svg { width: 22px; height: 22px; }
 
 .share-cancel {
   width: 100%;

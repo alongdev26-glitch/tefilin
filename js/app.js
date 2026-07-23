@@ -5,6 +5,8 @@
 
   var defaultState = {
     profile: { name: "ישראל ישראלי" },
+    onboardingComplete: false,
+    nusach: null,
     reminderEnabled: true,
     reminderTime: "08:30",
     commitStart: "06:15",
@@ -113,10 +115,12 @@
 
   // ---------- Navigation ----------
   var screens = {
+    onboarding: document.getElementById("screen-onboarding"),
     home: document.getElementById("screen-home"),
     reminders: document.getElementById("screen-reminders"),
     stats: document.getElementById("screen-stats"),
     settings: document.getElementById("screen-settings"),
+    nusach: document.getElementById("screen-nusach"),
     prayer: document.getElementById("screen-prayer")
   };
 
@@ -130,11 +134,13 @@
     navBtns.forEach(function (btn) {
       btn.classList.toggle("active", btn.dataset.nav === name);
     });
-    bottomNav.classList.toggle("hidden", name === "prayer");
+    bottomNav.classList.toggle("hidden", name === "prayer" || name === "onboarding" || name === "nusach");
     if (name === "stats") renderStats();
     if (name === "settings") renderSettings();
     if (name === "reminders") renderReminders();
     if (name === "prayer") {
+      renderBlessingCard();
+      renderAmidahCard();
       var prayerContent = screens.prayer.querySelector(".content");
       if (prayerContent) prayerContent.scrollTop = 0;
     }
@@ -186,7 +192,10 @@
     ["סליחה", "סְלַח לָנוּ אָבִינוּ כִּי חָטָאנוּ, מְחַל לָנוּ מַלְכֵּנוּ כִּי פָשָׁעְנוּ, כִּי מוֹחֵל וְסוֹלֵחַ אָתָּה. בָּרוּךְ אַתָּה יְהֹוָה, חַנּוּן הַמַּרְבֶּה לִסְלוֹחַ."],
     ["גאולה", "רְאֵה נָא בְעָנְיֵנוּ וְרִיבָה רִיבֵנוּ, וּגְאָלֵנוּ מְהֵרָה לְמַעַן שְׁמֶךָ, כִּי אֵל גּוֹאֵל חָזָק אָתָּה. בָּרוּךְ אַתָּה יְהֹוָה, גּוֹאֵל יִשְׂרָאֵל."],
     ["רפואה", "רְפָאֵנוּ יְהֹוָה וְנֵרָפֵא, הוֹשִׁיעֵנוּ וְנִוָּשֵׁעָה, כִּי תְהִלָּתֵנוּ אָתָּה, וְהַעֲלֵה רְפוּאָה שְׁלֵמָה לְכָל מַכּוֹתֵינוּ. בָּרוּךְ אַתָּה יְהֹוָה, רוֹפֵא חוֹלֵי עַמּוֹ יִשְׂרָאֵל."],
-    ["ברכת השנים", "בָּרֵךְ עָלֵינוּ יְהֹוָה אֱלֹהֵינוּ אֶת הַשָּׁנָה הַזֹּאת וְאֶת כָּל מִינֵי תְבוּאָתָהּ לְטוֹבָה, וְתֵן בְּרָכָה עַל פְּנֵי הָאֲדָמָה, וְשַׂבְּעֵנוּ מִטּוּבָךְ. בָּרוּךְ אַתָּה יְהֹוָה, מְבָרֵךְ הַשָּׁנִים."],
+    ["ברכת השנים",
+      "בָּרֵךְ עָלֵינוּ יְהֹוָה אֱלֹהֵינוּ אֶת הַשָּׁנָה הַזֹּאת וְאֶת כָּל מִינֵי תְבוּאָתָהּ לְטוֹבָה, וְתֵן בְּרָכָה עַל פְּנֵי הָאֲדָמָה, וְשַׂבְּעֵנוּ מִטּוּבָךְ. בָּרוּךְ אַתָּה יְהֹוָה, מְבָרֵךְ הַשָּׁנִים.",
+      "בָּרְכֵנוּ יְהֹוָה אֱלֹהֵינוּ בְּכָל מַעֲשֵׂה יָדֵינוּ, וּבָרֵךְ שְׁנָתֵנוּ בְּטַלְלֵי רָצוֹן בְּרָכָה וּנְדָבָה, וּתְהִי אַחֲרִיתָהּ חַיִּים וְשָׂבָע וְשָׁלוֹם כַּשָּׁנִים הַטּוֹבוֹת לִבְרָכָה, כִּי אֵל טוֹב וּמֵטִיב אַתָּה וּמְבָרֵךְ הַשָּׁנִים. בָּרוּךְ אַתָּה יְהֹוָה, מְבָרֵךְ הַשָּׁנִים."
+    ],
     ["קיבוץ גליות", "תְּקַע בְּשׁוֹפָר גָּדוֹל לְחֵרוּתֵנוּ, וְשָׂא נֵס לְקַבֵּץ גָּלֻיּוֹתֵינוּ, וְקַבְּצֵנוּ יַחַד מֵאַרְבַּע כַּנְפוֹת הָאָרֶץ. בָּרוּךְ אַתָּה יְהֹוָה, מְקַבֵּץ נִדְחֵי עַמּוֹ יִשְׂרָאֵל."],
     ["דין", "הָשִׁיבָה שׁוֹפְטֵינוּ כְּבָרִאשׁוֹנָה וְיוֹעֲצֵינוּ כְּבַתְּחִלָּה, וּמְלוֹךְ עָלֵינוּ אַתָּה יְהֹוָה לְבַדְּךָ בְּחֶסֶד וּבְרַחֲמִים, וְצַדְּקֵנוּ בַּמִּשְׁפָּט. בָּרוּךְ אַתָּה יְהֹוָה, מֶלֶךְ אוֹהֵב צְדָקָה וּמִשְׁפָּט."],
     ["ברכת המינים", "וְלַמַּלְשִׁינִים אַל תְּהִי תִקְוָה, וְכָל הָרִשְׁעָה כְּרֶגַע תֹּאבֵד, וְכָל אוֹיְבֶיךָ מְהֵרָה יִכָּרֵתוּ, וְהַזֵּדִים מְהֵרָה תְעַקֵּר וּתְשַׁבֵּר וּתְמַגֵּר וְתַכְנִיעַ בִּמְהֵרָה בְיָמֵינוּ. בָּרוּךְ אַתָּה יְהֹוָה, שׁוֹבֵר אֹיְבִים וּמַכְנִיעַ זֵדִים."],
@@ -196,20 +205,70 @@
     ["קבלת תפילה", "שְׁמַע קוֹלֵנוּ יְהֹוָה אֱלֹהֵינוּ, חוּס וְרַחֵם עָלֵינוּ, וְקַבֵּל בְּרַחֲמִים וּבְרָצוֹן אֶת תְּפִלָּתֵנוּ, כִּי אֵל שׁוֹמֵעַ תְּפִלּוֹת וְתַחֲנוּנִים אָתָּה. בָּרוּךְ אַתָּה יְהֹוָה, שׁוֹמֵעַ תְּפִלָּה."],
     ["עבודה", "רְצֵה יְהֹוָה אֱלֹהֵינוּ בְּעַמְּךָ יִשְׂרָאֵל וּבִתְפִלָּתָם, וְהָשֵׁב אֶת הָעֲבוֹדָה לִדְבִיר בֵּיתֶךָ. וְתֶחֱזֶינָה עֵינֵינוּ בְּשׁוּבְךָ לְצִיּוֹן בְּרַחֲמִים. בָּרוּךְ אַתָּה יְהֹוָה, הַמַּחֲזִיר שְׁכִינָתוֹ לְצִיּוֹן."],
     ["הודאה", "מוֹדִים אֲנַחְנוּ לָךְ שָׁאַתָּה הוּא יְהֹוָה אֱלֹהֵינוּ וֵאלֹהֵי אֲבוֹתֵינוּ לְעוֹלָם וָעֶד, צוּר חַיֵּינוּ מָגֵן יִשְׁעֵנוּ אַתָּה הוּא לְדוֹר וָדוֹר. נוֹדֶה לְּךָ וּנְסַפֵּר תְּהִלָּתֶךָ עַל חַיֵּינוּ הַמְּסוּרִים בְּיָדֶךָ, וְעַל נִשְׁמוֹתֵינוּ הַפְּקוּדוֹת לָךְ, וְעַל נִסֶּיךָ שֶׁבְּכָל יוֹם עִמָּנוּ, וְעַל נִפְלְאוֹתֶיךָ וְטוֹבוֹתֶיךָ שֶׁבְּכָל עֵת, עֶרֶב וָבֹקֶר וְצָהֳרָיִם. וְעַל כֻּלָּם יִתְבָּרַךְ וְיִתְרוֹמַם שִׁמְךָ מַלְכֵּנוּ תָּמִיד לְעוֹלָם וָעֶד. בָּרוּךְ אַתָּה יְהֹוָה, הַטּוֹב שִׁמְךָ וּלְךָ נָאֶה לְהוֹדוֹת."],
-    ["שלום", "שִׂים שָׁלוֹם טוֹבָה וּבְרָכָה, חֵן וָחֶסֶד וְרַחֲמִים, עָלֵינוּ וְעַל כָּל יִשְׂרָאֵל עַמֶּךָ. בָּרְכֵנוּ אָבִינוּ כֻּלָּנוּ כְּאֶחָד בְּאוֹר פָּנֶיךָ, כִּי בְאוֹר פָּנֶיךָ נָתַתָּ לָּנוּ יְהֹוָה אֱלֹהֵינוּ תּוֹרַת חַיִּים וְאַהֲבַת חֶסֶד, וּצְדָקָה וּבְרָכָה וְרַחֲמִים וְחַיִּים וְשָׁלוֹם. בָּרוּךְ אַתָּה יְהֹוָה, הַמְבָרֵךְ אֶת עַמּוֹ יִשְׂרָאֵל בַּשָּׁלוֹם."],
+    ["שלום",
+      "שִׂים שָׁלוֹם טוֹבָה וּבְרָכָה, חֵן וָחֶסֶד וְרַחֲמִים, עָלֵינוּ וְעַל כָּל יִשְׂרָאֵל עַמֶּךָ. בָּרְכֵנוּ אָבִינוּ כֻּלָּנוּ כְּאֶחָד בְּאוֹר פָּנֶיךָ, כִּי בְאוֹר פָּנֶיךָ נָתַתָּ לָּנוּ יְהֹוָה אֱלֹהֵינוּ תּוֹרַת חַיִּים וְאַהֲבַת חֶסֶד, וּצְדָקָה וּבְרָכָה וְרַחֲמִים וְחַיִּים וְשָׁלוֹם. בָּרוּךְ אַתָּה יְהֹוָה, הַמְבָרֵךְ אֶת עַמּוֹ יִשְׂרָאֵל בַּשָּׁלוֹם.",
+      "שָׁלוֹם רָב עַל יִשְׂרָאֵל עַמְּךָ תָּשִׂים לְעוֹלָם, כִּי אַתָּה הוּא מֶלֶךְ אָדוֹן לְכָל הַשָּׁלוֹם, וְטוֹב בְּעֵינֶיךָ לְבָרֵךְ אֶת עַמְּךָ יִשְׂרָאֵל בְּכָל עֵת וּבְכָל שָׁעָה בִּשְׁלוֹמֶךָ. בָּרוּךְ אַתָּה יְהֹוָה, הַמְבָרֵךְ אֶת עַמּוֹ יִשְׂרָאֵל בַּשָּׁלוֹם."
+    ],
     ["בסיום", "אֱלֹהַי, נְצוֹר לְשׁוֹנִי מֵרָע וּשְׂפָתַי מִדַּבֵּר מִרְמָה. יִהְיוּ לְרָצוֹן אִמְרֵי פִי וְהֶגְיוֹן לִבִּי לְפָנֶיךָ, יְהֹוָה צוּרִי וְגוֹאֲלִי."]
   ];
 
-  var AMIDAH_FULL_HTML = AMIDAH_ITEMS.map(function (item) {
-    return '<div class="amidah-item"><p class="amidah-name">' + item[0] + '</p><p class="amidah-text">' + item[1] + '</p></div>';
-  }).join("");
+  function isAshkenazi() {
+    return state.nusach === "ashkenazi" || !state.nusach;
+  }
 
-  ["shema-full", "shema-full-2"].forEach(function (id) {
-    var el = document.getElementById(id);
-    if (el) el.innerHTML = SHEMA_FULL_HTML;
-  });
+  function buildAmidahHtml() {
+    var useAshkenazi = isAshkenazi();
+    return AMIDAH_ITEMS.map(function (item) {
+      var text = (!useAshkenazi && item[2]) ? item[2] : item[1];
+      return '<div class="amidah-item"><p class="amidah-name">' + item[0] + '</p><p class="amidah-text">' + text + '</p></div>';
+    }).join("");
+  }
+
   var amidahFullEl = document.getElementById("amidah-full");
-  if (amidahFullEl) amidahFullEl.innerHTML = AMIDAH_FULL_HTML;
+
+  function renderAmidahCard() {
+    if (amidahFullEl) amidahFullEl.innerHTML = buildAmidahHtml();
+  }
+
+  var shemaFullEl = document.getElementById("shema-full-2");
+  if (shemaFullEl) shemaFullEl.innerHTML = SHEMA_FULL_HTML;
+
+  // ---------- Nusach-aware tefillin blessing ----------
+  var BLESSING_ASHKENAZI_HTML =
+    '<p class="blessing-step-label">בהנחת תפילין של יד</p>' +
+    '<p class="prayer-line-body blessing-text">' +
+      'בָּרוּךְ אַתָּה יְהֹוָה אֱלֹהֵינוּ מֶלֶךְ הָעוֹלָם, אֲשֶׁר קִדְּשָׁנוּ ' +
+      'בְּמִצְוֹתָיו וְצִוָּנוּ לְהָנִיחַ תְּפִלִּין:' +
+    '</p>' +
+    '<p class="blessing-step-label">בהנחת תפילין של ראש</p>' +
+    '<p class="prayer-line-body blessing-text">' +
+      'בָּרוּךְ אַתָּה יְהֹוָה אֱלֹהֵינוּ מֶלֶךְ הָעוֹלָם, אֲשֶׁר קִדְּשָׁנוּ ' +
+      'בְּמִצְוֹתָיו וְצִוָּנוּ עַל מִצְוַת תְּפִלִּין:' +
+    '</p>' +
+    '<p class="prayer-line-note">(בלחש: ברוך שם כבוד מלכותו לעולם ועד)</p>';
+
+  // Sephardi / Moroccan / Edot HaMizrach: one combined blessing covering both
+  // hand and head tefillin, no second blessing, no quiet "ברוך שם" pause.
+  var BLESSING_COMBINED_HTML =
+    '<p class="blessing-step-label">בהנחת תפילין (יד וראש)</p>' +
+    '<p class="prayer-line-body blessing-text">' +
+      'בָּרוּךְ אַתָּה יְהֹוָה אֱלֹהֵינוּ מֶלֶךְ הָעוֹלָם, אֲשֶׁר קִדְּשָׁנוּ ' +
+      'בְּמִצְוֹתָיו וְצִוָּנוּ לְהָנִיחַ תְּפִלִּין:' +
+    '</p>';
+
+  var BLESSING_HTML_BY_NUSACH = {
+    ashkenazi: BLESSING_ASHKENAZI_HTML,
+    sephardi: BLESSING_COMBINED_HTML,
+    moroccan: BLESSING_COMBINED_HTML,
+    mizrachi: BLESSING_COMBINED_HTML
+  };
+
+  var blessingBodyEl = document.getElementById("blessing-body");
+
+  function renderBlessingCard() {
+    if (!blessingBodyEl) return;
+    blessingBodyEl.innerHTML = BLESSING_HTML_BY_NUSACH[state.nusach] || BLESSING_ASHKENAZI_HTML;
+  }
 
   document.querySelectorAll(".expandable .prayer-card-head").forEach(function (head) {
     head.addEventListener("click", function () {
@@ -279,6 +338,10 @@
       showToast("הסימון הוסר");
       return;
     }
+    if (!state.nusach) {
+      openNusachPicker("home");
+      return;
+    }
     showScreen("prayer");
   });
 
@@ -292,6 +355,60 @@
     renderHome();
     showScreen("home");
     showToast("הנחת בהצלחה! 🙏 הנתון נשמר");
+  });
+
+  // ---------- Nusach picker ----------
+  var NUSACH_LABELS = {
+    ashkenazi: "אשכנזי",
+    sephardi: "ספרדי",
+    moroccan: "מרוקאי",
+    mizrachi: "עדות המזרח"
+  };
+
+  var nusachOpenedFrom = "home";
+
+  function openNusachPicker(openedFrom) {
+    nusachOpenedFrom = openedFrom || "home";
+    showScreen("nusach");
+  }
+
+  document.getElementById("nusach-close").addEventListener("click", function () {
+    showScreen(nusachOpenedFrom);
+  });
+
+  document.querySelectorAll(".nusach-option").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      state.nusach = btn.dataset.nusach;
+      saveState();
+      if (nusachOpenedFrom === "settings") {
+        renderSettings();
+        showScreen("settings");
+      } else {
+        showScreen("prayer");
+      }
+    });
+  });
+
+  document.getElementById("nusach-settings-row").addEventListener("click", function () {
+    openNusachPicker("settings");
+  });
+
+  // ---------- Onboarding ----------
+  var onboardingNameInput = document.getElementById("onboarding-name-input");
+  var onboardingSubmitBtn = document.getElementById("onboarding-submit-btn");
+
+  function completeOnboarding() {
+    var typed = onboardingNameInput.value.trim();
+    state.profile.name = typed || defaultState.profile.name;
+    state.onboardingComplete = true;
+    saveState();
+    renderSettings();
+    showScreen("home");
+  }
+
+  onboardingSubmitBtn.addEventListener("click", completeOnboarding);
+  onboardingNameInput.addEventListener("keydown", function (e) {
+    if (e.key === "Enter") completeOnboarding();
   });
 
   // ---------- Stats ----------
@@ -453,6 +570,7 @@
   var profileStreakEl = document.getElementById("profile-streak");
   var levelValueEl = document.getElementById("level-value");
   var darkModeToggle = document.getElementById("dark-mode-toggle");
+  var nusachSettingsValueEl = document.getElementById("nusach-settings-value");
 
   function levelForStreak(streak) {
     if (streak >= 30) return "זהב";
@@ -466,6 +584,7 @@
     profileStreakEl.textContent = streak;
     levelValueEl.textContent = levelForStreak(streak);
     darkModeToggle.checked = state.darkMode;
+    nusachSettingsValueEl.textContent = state.nusach ? NUSACH_LABELS[state.nusach] : "לא נבחר";
   }
 
   darkModeToggle.addEventListener("change", function () {
@@ -493,8 +612,8 @@
     if (state.useSunset) {
       if (state.lat != null && state.lon != null) {
         var sunset = calculateSunset(new Date(), state.lat, state.lon);
-        sunsetInfoEl.textContent = sunset
-          ? "🌇 שקיעה מחושבת להיום: " + sunset
+        sunsetInfoEl.innerHTML = sunset
+          ? '<svg class="inline-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18h18M5 18a7 7 0 0 1 14 0"/><path d="M12 8V5M6.5 10.5 5 9M17.5 10.5 19 9"/></svg> שקיעה מחושבת להיום: ' + sunset
           : "לא ניתן לחשב שקיעה במיקום זה";
       } else {
         sunsetInfoEl.textContent = "ממתין להרשאת מיקום...";
@@ -597,5 +716,9 @@
   // ---------- Init ----------
   document.body.classList.toggle("dark", state.darkMode);
   renderHome();
-  showScreen("home");
+  if (state.onboardingComplete) {
+    showScreen("home");
+  } else {
+    showScreen("onboarding");
+  }
 })();
