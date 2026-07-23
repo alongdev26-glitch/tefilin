@@ -13,6 +13,11 @@
 <body>
 <div class="phone">
 
+  <div class="coin-badge" id="coin-badge">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5v9M9.5 9.5c0-1 .8-1.5 2.5-1.5s2.5.6 2.5 1.5-1 1.3-2.5 1.5c-1.7.2-2.5.6-2.5 1.5s.8 1.5 2.5 1.5 2.5-.5 2.5-1.5"/></svg>
+    <span id="coin-balance">0</span>
+  </div>
+
   <!-- ===== ONBOARDING (FIRST RUN) ===== -->
   <section class="screen hidden" id="screen-onboarding">
     <div class="content onboarding-content">
@@ -50,14 +55,28 @@
         <span class="cta-arrow" id="lay-btn-arrow">◂</span>
       </button>
 
-      <div class="card level-progress-card">
+      <div class="card level-progress-card" data-nav="shop">
         <div class="card-title">רמת החסידות שלך</div>
         <div class="level-progress-current" id="level-progress-current">ברונזה</div>
         <div class="level-progress-bar-wrap">
           <div class="level-progress-bar" id="level-progress-bar"></div>
         </div>
         <div class="level-progress-next" id="level-progress-next">עוד 7 ימים רצופים לרמת כסף</div>
+        <div class="level-progress-cta">לחצו לחנות הרמות ›</div>
       </div>
+    </div>
+  </section>
+
+  <!-- ===== SHOP ===== -->
+  <section class="screen hidden" id="screen-shop">
+    <header class="topbar">
+      <button class="icon-btn" id="shop-close" aria-label="חזרה"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      <h1 class="topbar-title">חנות דרגות</h1>
+      <span class="icon-btn" style="visibility:hidden"></span>
+    </header>
+    <div class="content">
+      <p class="body-text shop-intro">רכשו דרגות באמצעות המטבעות שצברתם על הנחת תפילין יומית ורצפים שבועיים.</p>
+      <div class="shop-tier-list" id="shop-tier-list"></div>
     </div>
   </section>
 
@@ -274,7 +293,7 @@
         </div>
       </div>
 
-      <div class="card level-card">
+      <div class="card level-card" data-nav="shop">
         <div class="level-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="5.5"/><path d="M8.7 14 7 21l5-2.7L17 21l-1.7-7"/></svg></div>
         <div class="level-label">רמת חסידות</div>
         <div class="level-value" id="level-value">זהב</div>

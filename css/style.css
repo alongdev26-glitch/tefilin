@@ -208,6 +208,94 @@ body {
   color: var(--text-sub);
 }
 
+.level-progress-card { cursor: pointer; }
+
+.level-progress-cta {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--blue);
+  margin-top: 10px;
+}
+
+/* ---------- Coin badge ---------- */
+.coin-badge {
+  position: absolute;
+  top: 16px;
+  right: 14px;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(0,0,0,0.32);
+  color: #fff;
+  padding: 5px 10px 5px 8px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  pointer-events: none;
+}
+
+.coin-badge.hidden { display: none; }
+
+.coin-badge-icon { display: flex; color: var(--gold); flex-shrink: 0; }
+.coin-badge-icon svg { width: 15px; height: 15px; }
+
+#coin-balance.pulse { animation: coin-pulse 0.5s ease; }
+
+@keyframes coin-pulse {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.35); color: var(--gold); }
+  100% { transform: scale(1); }
+}
+
+/* ---------- Shop ---------- */
+.shop-intro { margin: 4px 0 16px; text-align: center; }
+
+.shop-tier-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.shop-tier-card { text-align: center; }
+
+.shop-tier-card.locked { opacity: 0.55; }
+
+.shop-tier-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 4px;
+}
+
+.shop-tier-flavor {
+  font-size: 12.5px;
+  color: var(--text-sub);
+  margin-bottom: 10px;
+}
+
+.shop-tier-status {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 999px;
+}
+
+.shop-tier-owned { background: var(--blue-light); color: var(--blue); }
+.shop-tier-locked { background: var(--ink-light); color: var(--text-sub); }
+
+.shop-buy-btn {
+  background: var(--blue);
+  color: #fff;
+}
+
+.shop-buy-btn:disabled {
+  background: var(--ink-light);
+  color: var(--text-sub);
+  cursor: not-allowed;
+}
+
 .onboarding-content {
   display: flex;
   flex-direction: column;

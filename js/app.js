@@ -15,7 +15,12 @@
     lat: null,
     lon: null,
     darkMode: false,
-    log: {} // { "YYYY-MM-DD": "HH:MM" }
+    log: {}, // { "YYYY-MM-DD": "HH:MM" }
+    coins: 0,
+    purchasedTierIndex: 0,
+    coinLog: {}, // { "YYYY-MM-DD": true } - dedup guard so daily coins are only ever awarded once per date
+    lastStreakSeen: 0,
+    weeklyMilestonesAwarded: 0
   };
 
   function loadState() {
@@ -23,7 +28,10 @@
       var raw = localStorage.getItem(STORAGE_KEY);
       if (!raw) return JSON.parse(JSON.stringify(defaultState));
       var parsed = JSON.parse(raw);
-      return Object.assign({}, defaultState, parsed, { log: parsed.log || {} });
+      return Object.assign({}, defaultState, parsed, {
+        log: parsed.log || {},
+        coinLog: parsed.coinLog || {}
+      });
     } catch (e) {
       return JSON.parse(JSON.stringify(defaultState));
     }
@@ -121,6 +129,7 @@
     stats: document.getElementById("screen-stats"),
     settings: document.getElementById("screen-settings"),
     nusach: document.getElementById("screen-nusach"),
+    shop: document.getElementById("screen-shop"),
     prayer: document.getElementById("screen-prayer")
   };
 
@@ -134,10 +143,12 @@
     navBtns.forEach(function (btn) {
       btn.classList.toggle("active", btn.dataset.nav === name);
     });
-    bottomNav.classList.toggle("hidden", name === "prayer" || name === "onboarding" || name === "nusach");
+    bottomNav.classList.toggle("hidden", name === "prayer" || name === "onboarding" || name === "nusach" || name === "shop");
+    document.getElementById("coin-badge").classList.toggle("hidden", name === "onboarding");
     if (name === "stats") renderStats();
     if (name === "settings") renderSettings();
     if (name === "reminders") renderReminders();
+    if (name === "shop") renderShop();
     if (name === "prayer") {
       renderBlessingCard();
       renderAmidahCard();
@@ -294,6 +305,46 @@
     }, 2200);
   }
 
+  // ---------- Coin badge ----------
+  var coinBadgeEl = document.getElementById("coin-badge");
+  var coinBalanceEl = document.getElementById("coin-balance");
+  var displayedCoins = state.coins;
+
+  function tweenCoinDisplay(from, to) {
+    var duration = 600;
+    var startTime = null;
+    var done = false;
+    coinBalanceEl.classList.remove("pulse");
+    void coinBalanceEl.offsetWidth;
+    coinBalanceEl.classList.add("pulse");
+    function finish() {
+      if (done) return;
+      done = true;
+      coinBalanceEl.textContent = to;
+    }
+    function step(ts) {
+      if (done) return;
+      if (!startTime) startTime = ts;
+      var progress = Math.min(1, (ts - startTime) / duration);
+      coinBalanceEl.textContent = Math.round(from + (to - from) * progress);
+      if (progress < 1) requestAnimationFrame(step);
+      else finish();
+    }
+    requestAnimationFrame(step);
+    // Safety net: rAF is throttled/paused on hidden/backgrounded tabs, so guarantee
+    // the final correct value lands even if the smooth animation never completes.
+    setTimeout(finish, duration + 300);
+  }
+
+  function renderCoinBadge(animate) {
+    if (animate && displayedCoins !== state.coins) {
+      tweenCoinDisplay(displayedCoins, state.coins);
+    } else {
+      coinBalanceEl.textContent = state.coins;
+    }
+    displayedCoins = state.coins;
+  }
+
   // ---------- Home screen ----------
   var greetingEl = document.getElementById("greeting-text");
   var statusEl = document.getElementById("status-text");
@@ -304,41 +355,35 @@
   var levelProgressBarEl = document.getElementById("level-progress-bar");
   var levelProgressNextEl = document.getElementById("level-progress-next");
 
-  // ---------- Devotion level tiers ----------
+  // ---------- Devotion level tiers (purchased with coins) ----------
   var LEVEL_TIERS = [
-    { name: "ברונזה", threshold: 0 },
-    { name: "כסף", threshold: 7 },
-    { name: "זהב", threshold: 30 },
-    { name: "יהלום", threshold: 180 },
-    { name: "פלטינום", threshold: 365 }
+    { name: "בית הכנסת", flavor: "הולך לבית כנסת עם כיפה בשבת", price: 0 },
+    { name: "שחרית", flavor: "הולך להתפלל שחרית כל בוקר", price: 500 },
+    { name: "לומד תורה", flavor: "לומד תורה מדי יום", price: 1000 },
+    { name: "מרביץ תורה", flavor: "מרביץ תורה ומלמד אחרים", price: 2500 },
+    { name: "מוסיף לשם", flavor: "מוסיף קדושה וכבוד לשם שמים בכל מעשיו", price: 5000 },
+    { name: "מטאור", flavor: "מועמד לרשות הסנהדרין", price: 10000 },
+    { name: "רבינו הגדול", flavor: "פסגת המסע הרוחני", price: 25000 }
   ];
 
-  function getLevelInfo(streak) {
-    var current = LEVEL_TIERS[0];
-    var next = null;
-    for (var i = 0; i < LEVEL_TIERS.length; i++) {
-      if (streak >= LEVEL_TIERS[i].threshold) {
-        current = LEVEL_TIERS[i];
-        next = LEVEL_TIERS[i + 1] || null;
-      }
-    }
-    return { current: current, next: next };
-  }
+  function getCurrentTier() { return LEVEL_TIERS[state.purchasedTierIndex]; }
+  function getNextTier() { return LEVEL_TIERS[state.purchasedTierIndex + 1] || null; }
 
   function renderLevelProgress() {
-    var streak = computeStreak();
-    var info = getLevelInfo(streak);
-    levelProgressCurrentEl.textContent = info.current.name;
+    var current = getCurrentTier();
+    var next = getNextTier();
+    levelProgressCurrentEl.textContent = current.name;
 
-    if (info.next) {
-      var span = info.next.threshold - info.current.threshold;
-      var progress = Math.min(100, Math.round(((streak - info.current.threshold) / span) * 100));
+    if (next) {
+      var progress = Math.min(100, Math.round((state.coins / next.price) * 100));
       levelProgressBarEl.style.width = progress + "%";
-      var daysLeft = info.next.threshold - streak;
-      levelProgressNextEl.textContent = "עוד " + daysLeft + " ימים רצופים לרמת " + info.next.name;
+      var missing = Math.max(0, next.price - state.coins);
+      levelProgressNextEl.textContent = missing > 0
+        ? "עוד " + missing + " מטבעות לדרגת " + next.name
+        : "יש לך מספיק מטבעות לדרגת " + next.name + " - עברו לחנות";
     } else {
       levelProgressBarEl.style.width = "100%";
-      levelProgressNextEl.textContent = "הגעת לרמה הגבוהה ביותר!";
+      levelProgressNextEl.textContent = "הגעת לדרגה הגבוהה ביותר!";
     }
   }
 
@@ -393,11 +438,32 @@
   });
 
   document.getElementById("confirm-lay-btn").addEventListener("click", function () {
-    state.log[todayKey()] = nowHHMM();
+    var key = todayKey();
+    state.log[key] = nowHHMM();
+
+    var toastMsg = "הנחת בהצלחה! 🙏 +50 מטבעות";
+    if (!state.coinLog[key]) {
+      state.coinLog[key] = true;
+      state.coins += 50;
+
+      var streak = computeStreak();
+      if (streak < state.lastStreakSeen) state.weeklyMilestonesAwarded = 0;
+      state.lastStreakSeen = streak;
+
+      var milestone = Math.floor(streak / 7);
+      if (milestone > 0 && milestone > state.weeklyMilestonesAwarded) {
+        var bonus = 10 * milestone;
+        state.coins += bonus;
+        state.weeklyMilestonesAwarded = milestone;
+        toastMsg = "הנחת בהצלחה! 🙏 +50 מטבעות ובונוס שבועי של +" + bonus + "!";
+      }
+    }
+
     saveState();
     renderHome();
+    renderCoinBadge(true);
     showScreen("home");
-    showToast("הנחת בהצלחה! 🙏 הנתון נשמר");
+    showToast(toastMsg);
   });
 
   // ---------- Nusach picker ----------
@@ -436,6 +502,60 @@
     openNusachPicker("settings");
   });
 
+  // ---------- Shop ----------
+  var shopTierListEl = document.getElementById("shop-tier-list");
+
+  function renderShop() {
+    var html = "";
+    LEVEL_TIERS.forEach(function (tier, i) {
+      var owned = i <= state.purchasedTierIndex;
+      var isNext = i === state.purchasedTierIndex + 1;
+      var stateClass = owned ? "owned" : (isNext ? "next" : "locked");
+      var actionHtml;
+      if (owned) {
+        actionHtml = '<span class="shop-tier-status shop-tier-owned">בבעלותך ✓</span>';
+      } else if (isNext) {
+        var afford = state.coins >= tier.price;
+        actionHtml = '<button class="pill-btn shop-buy-btn" data-tier-index="' + i + '"' + (afford ? "" : " disabled") + '>קנה ב-' + tier.price + ' מטבעות</button>';
+      } else {
+        actionHtml = '<span class="shop-tier-status shop-tier-locked">נעול</span>';
+      }
+      var nameHtml = (owned || isNext) ? tier.name : "?";
+      var flavorHtml = (owned || isNext) ? tier.flavor : "המשיכו להתקדם כדי לגלות את הדרגה הבאה";
+      html += '<div class="card shop-tier-card ' + stateClass + '">' +
+        '<div class="shop-tier-name">' + nameHtml + '</div>' +
+        '<div class="shop-tier-flavor">' + flavorHtml + '</div>' +
+        actionHtml + '</div>';
+    });
+    shopTierListEl.innerHTML = html;
+    shopTierListEl.querySelectorAll(".shop-buy-btn").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        purchaseTier(parseInt(btn.dataset.tierIndex, 10));
+      });
+    });
+  }
+
+  function purchaseTier(index) {
+    var tier = LEVEL_TIERS[index];
+    if (!tier || index !== state.purchasedTierIndex + 1) return;
+    if (state.coins < tier.price) {
+      showToast("אין מספיק מטבעות לרכישת \"" + tier.name + "\"");
+      return;
+    }
+    state.coins -= tier.price;
+    state.purchasedTierIndex = index;
+    saveState();
+    renderShop();
+    renderCoinBadge(true);
+    renderLevelProgress();
+    renderSettings();
+    showToast("רכשת את דרגת \"" + tier.name + "\"! 🎉");
+  }
+
+  document.getElementById("shop-close").addEventListener("click", function () {
+    showScreen("home");
+  });
+
   // ---------- Onboarding ----------
   var onboardingNameInput = document.getElementById("onboarding-name-input");
   var onboardingSubmitBtn = document.getElementById("onboarding-submit-btn");
@@ -444,8 +564,11 @@
     var typed = onboardingNameInput.value.trim();
     state.profile.name = typed || defaultState.profile.name;
     state.onboardingComplete = true;
+    state.coins += 150; // 100 starting + 50 first-week bonus
     saveState();
+    renderCoinBadge();
     renderSettings();
+    renderHome();
     showScreen("home");
   }
 
@@ -615,15 +738,11 @@
   var darkModeToggle = document.getElementById("dark-mode-toggle");
   var nusachSettingsValueEl = document.getElementById("nusach-settings-value");
 
-  function levelForStreak(streak) {
-    return getLevelInfo(streak).current.name;
-  }
-
   function renderSettings() {
     profileNameEl.textContent = state.profile.name;
     var streak = computeStreak();
     profileStreakEl.textContent = streak;
-    levelValueEl.textContent = levelForStreak(streak);
+    levelValueEl.textContent = getCurrentTier().name;
     darkModeToggle.checked = state.darkMode;
     nusachSettingsValueEl.textContent = state.nusach ? NUSACH_LABELS[state.nusach] : "לא נבחר";
   }
@@ -757,6 +876,7 @@
   // ---------- Init ----------
   document.body.classList.toggle("dark", state.darkMode);
   renderHome();
+  renderCoinBadge();
   if (state.onboardingComplete) {
     showScreen("home");
   } else {
