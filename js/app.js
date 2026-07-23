@@ -761,6 +761,7 @@
   var levelValueEl = document.getElementById("level-value");
   var darkModeToggle = document.getElementById("dark-mode-toggle");
   var nusachSettingsValueEl = document.getElementById("nusach-settings-value");
+  var profilePasswordInput = document.getElementById("profile-password-input");
 
   function renderSettings() {
     profileNameEl.textContent = state.profile.name;
@@ -769,11 +770,17 @@
     levelValueEl.textContent = getCurrentTier().name;
     darkModeToggle.checked = state.darkMode;
     nusachSettingsValueEl.textContent = state.nusach ? NUSACH_LABELS[state.nusach] : "לא נבחר";
+    profilePasswordInput.value = state.profile.password || "";
   }
 
   darkModeToggle.addEventListener("change", function () {
     state.darkMode = darkModeToggle.checked;
     document.body.classList.toggle("dark", state.darkMode);
+    saveState();
+  });
+
+  profilePasswordInput.addEventListener("input", function () {
+    state.profile.password = profilePasswordInput.value;
     saveState();
   });
 
@@ -894,6 +901,11 @@
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", function () {
       navigator.serviceWorker.register("sw.js").catch(function () {});
+    });
+    // A new SW version means stale cached HTML/CSS/JS is still active on this
+    // page - reload once so the user actually gets the update they expect.
+    navigator.serviceWorker.addEventListener("controllerchange", function () {
+      location.reload();
     });
   }
 
