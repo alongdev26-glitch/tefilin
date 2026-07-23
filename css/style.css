@@ -10,6 +10,9 @@
   --gold: #c9971f;
   --shadow: 0 2px 10px rgba(20, 40, 70, 0.08);
   --radius: 16px;
+  --ink: #2b2f33;
+  --ink-light: #eceeef;
+  --ink-dark: #1c2024;
 }
 
 * { box-sizing: border-box; }
@@ -250,7 +253,7 @@ body {
   margin-bottom: 10px;
 }
 
-.book-icon { display: flex; color: var(--blue); flex-shrink: 0; }
+.book-icon { display: flex; color: var(--ink); flex-shrink: 0; }
 .book-icon svg { width: 20px; height: 20px; }
 
 .expandable .prayer-card-head {
@@ -466,7 +469,7 @@ body {
   margin-bottom: 0;
 }
 
-.reminder-time-row .alarm-icon { display: flex; color: var(--blue); }
+.reminder-time-row .alarm-icon { display: flex; color: var(--ink); }
 .reminder-time-row .alarm-icon svg { width: 17px; height: 17px; }
 
 /* ---------- Stats ---------- */
@@ -574,7 +577,7 @@ body {
 
 .day-letter.today { color: var(--navy); }
 
-.tip-card { margin-bottom: 16px; background: var(--navy); color: #fff; }
+.tip-card { margin-bottom: 16px; background: var(--ink-dark); color: #fff; }
 .tip-head {
   font-weight: 700;
   margin-bottom: 8px;
@@ -635,11 +638,11 @@ body {
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  background: var(--blue-light);
+  background: var(--ink-light);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--blue);
+  color: var(--ink);
   flex-shrink: 0;
 }
 
@@ -680,12 +683,12 @@ body {
 .settings-icon {
   width: 34px;
   height: 34px;
-  background: var(--blue-light);
+  background: var(--ink-light);
   border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--blue);
+  color: var(--ink);
   flex-shrink: 0;
 }
 
@@ -734,7 +737,7 @@ body {
 .nav-icon { display: flex; }
 .nav-icon svg { width: 21px; height: 21px; }
 
-.nav-btn.active { color: var(--blue); }
+.nav-btn.active { color: var(--ink); }
 
 /* ---------- Toast ---------- */
 .toast {
@@ -765,6 +768,9 @@ body.dark {
   --text: #eef1f4;
   --text-sub: #93a0ad;
   --blue-light: #202b3a;
+  --ink: #d8dce0;
+  --ink-light: #262b31;
+  --ink-dark: #0f1216;
 }
 
 body.dark .phone { background: var(--bg); }
@@ -826,7 +832,7 @@ body.dark .nusach-option { border-color: #2a3646; }
   flex-direction: column;
   align-items: center;
   gap: 6px;
-  background: var(--blue-light);
+  background: var(--ink-light);
   border: none;
   border-radius: 14px;
   padding: 14px 6px;
