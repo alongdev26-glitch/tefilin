@@ -582,11 +582,13 @@
 
   // ---------- Onboarding ----------
   var onboardingNameInput = document.getElementById("onboarding-name-input");
+  var onboardingPasswordInput = document.getElementById("onboarding-password-input");
   var onboardingSubmitBtn = document.getElementById("onboarding-submit-btn");
 
   function completeOnboarding() {
     var typed = onboardingNameInput.value.trim();
     state.profile.name = typed || defaultState.profile.name;
+    state.profile.password = onboardingPasswordInput.value;
     state.onboardingComplete = true;
     state.coins += 150; // 100 starting + 50 first-week bonus
     saveState();
@@ -598,6 +600,9 @@
 
   onboardingSubmitBtn.addEventListener("click", completeOnboarding);
   onboardingNameInput.addEventListener("keydown", function (e) {
+    if (e.key === "Enter") completeOnboarding();
+  });
+  onboardingPasswordInput.addEventListener("keydown", function (e) {
     if (e.key === "Enter") completeOnboarding();
   });
 
