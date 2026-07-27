@@ -2,16 +2,16 @@
   --navy: #154a78;
   --navy-dark: #103a5e;
   --blue: #1c6fb0;
-  --blue-light: #eaf2f9;
-  --bg: #eef1f4;
+  --blue-light: #f1f8fd;
+  --bg: #f8fafb;
   --card: #ffffff;
   --text: #1c2b3a;
   --text-sub: #6b7785;
   --gold: #c9971f;
-  --shadow: 0 2px 10px rgba(20, 40, 70, 0.08);
+  --shadow: 0 2px 10px rgba(20, 40, 70, 0.06);
   --radius: 16px;
   --ink: #2b2f33;
-  --ink-light: #eceeef;
+  --ink-light: #f3f4f5;
   --ink-dark: #1c2024;
 }
 
