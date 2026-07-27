@@ -20,7 +20,8 @@
     purchasedTierIndex: 0,
     coinLog: {}, // { "YYYY-MM-DD": true } - dedup guard so daily coins are only ever awarded once per date
     lastStreakSeen: 0,
-    weeklyMilestonesAwarded: 0
+    weeklyMilestonesAwarded: 0,
+    notifications: [] // { id, message, createdAt, read }
   };
 
   function loadState() {
@@ -30,7 +31,8 @@
       var parsed = JSON.parse(raw);
       return Object.assign({}, defaultState, parsed, {
         log: parsed.log || {},
-        coinLog: parsed.coinLog || {}
+        coinLog: parsed.coinLog || {},
+        notifications: parsed.notifications || []
       });
     } catch (e) {
       return JSON.parse(JSON.stringify(defaultState));
@@ -145,6 +147,8 @@
     });
     bottomNav.classList.toggle("hidden", name === "prayer" || name === "onboarding" || name === "nusach" || name === "shop");
     document.getElementById("coin-badge").classList.toggle("hidden", name === "onboarding");
+    document.getElementById("lay-fab").classList.toggle("hidden",
+      name === "home" || name === "onboarding" || name === "nusach" || name === "prayer");
     if (name === "stats") renderStats();
     if (name === "settings") renderSettings();
     if (name === "reminders") renderReminders();
@@ -305,6 +309,75 @@
     }, 2200);
   }
 
+  // ---------- Notifications & celebrations ----------
+  var CONFETTI_COLORS = ["#1c6fb0", "#2e9e5b", "#c9971f", "#9085e9", "#e34948"];
+  var confettiLayerEl = document.getElementById("confetti-layer");
+  var notifSheetEl = document.getElementById("notif-sheet");
+  var notifListEl = document.getElementById("notif-list");
+  var appReady = false;
+
+  function renderNotifBadges() {
+    var unread = state.notifications.filter(function (n) { return !n.read; }).length;
+    document.querySelectorAll(".badge-dot").forEach(function (dot) {
+      dot.classList.toggle("hidden", unread === 0);
+      dot.textContent = unread > 9 ? "9+" : (unread > 1 ? String(unread) : "");
+    });
+  }
+
+  function showCelebration() {
+    for (var i = 0; i < 28; i++) {
+      var piece = document.createElement("div");
+      piece.className = "confetti-piece";
+      piece.style.left = Math.random() * 100 + "%";
+      piece.style.background = CONFETTI_COLORS[i % CONFETTI_COLORS.length];
+      piece.style.animationDelay = (Math.random() * 0.3) + "s";
+      piece.style.borderRadius = (Math.random() > 0.5 ? "50%" : "2px");
+      confettiLayerEl.appendChild(piece);
+      (function (el) {
+        setTimeout(function () { el.remove(); }, 2200);
+      })(piece);
+    }
+  }
+
+  function pushNotification(message) {
+    var notif = { id: Date.now() + "-" + Math.random(), message: message, createdAt: new Date().toISOString(), read: false };
+    state.notifications.push(notif);
+    saveState();
+    renderNotifBadges();
+    if (appReady) showCelebration();
+  }
+
+  function renderNotifList() {
+    if (!state.notifications.length) {
+      notifListEl.innerHTML = '<div class="notif-empty">אין עדיין התראות</div>';
+      return;
+    }
+    var items = state.notifications.slice().reverse();
+    notifListEl.innerHTML = items.map(function (n) {
+      var d = new Date(n.createdAt);
+      var timeStr = pad(d.getHours()) + ":" + pad(d.getMinutes());
+      return '<div class="notif-item"><div class="notif-item-message">' + n.message + '</div><div class="notif-item-time">' + timeStr + '</div></div>';
+    }).join("");
+  }
+
+  function openNotifSheet() {
+    renderNotifList();
+    notifSheetEl.classList.remove("hidden");
+    state.notifications.forEach(function (n) { n.read = true; });
+    saveState();
+    renderNotifBadges();
+  }
+
+  function closeNotifSheet() {
+    notifSheetEl.classList.add("hidden");
+  }
+
+  document.querySelectorAll(".notif-bell-btn").forEach(function (btn) {
+    btn.addEventListener("click", openNotifSheet);
+  });
+  document.getElementById("notif-close").addEventListener("click", closeNotifSheet);
+  document.getElementById("notif-sheet-backdrop").addEventListener("click", closeNotifSheet);
+
   // ---------- Coin badge ----------
   var coinBadgeEl = document.getElementById("coin-badge");
   var coinBalanceEl = document.getElementById("coin-balance");
@@ -352,7 +425,7 @@
   var layBtnLabel = document.getElementById("lay-btn-label");
   var layBtnArrow = document.getElementById("lay-btn-arrow");
   var levelProgressCurrentEl = document.getElementById("level-progress-current");
-  var levelProgressBarEl = document.getElementById("level-progress-bar");
+  var stageTrackerEl = document.getElementById("stage-tracker");
   var levelProgressNextEl = document.getElementById("level-progress-next");
 
   // ---------- Devotion level tiers (purchased with coins) ----------
@@ -384,20 +457,30 @@
   function getCurrentTier() { return LEVEL_TIERS[state.purchasedTierIndex]; }
   function getNextTier() { return LEVEL_TIERS[state.purchasedTierIndex + 1] || null; }
 
+  function renderStageTracker() {
+    var html = '<div class="stage-rail"></div>';
+    LEVEL_TIERS.forEach(function (tier, i) {
+      var owned = i <= state.purchasedTierIndex;
+      var isNext = i === state.purchasedTierIndex + 1;
+      var stateClass = owned ? "owned" : (isNext ? "next" : "");
+      var inner = owned ? tier.icon : (i + 1);
+      html += '<div class="stage-circle-wrap"><div class="stage-circle ' + stateClass + '">' + inner + '</div></div>';
+    });
+    stageTrackerEl.innerHTML = html;
+  }
+
   function renderLevelProgress() {
     var current = getCurrentTier();
     var next = getNextTier();
     levelProgressCurrentEl.textContent = current.name;
+    renderStageTracker();
 
     if (next) {
-      var progress = Math.min(100, Math.round((state.coins / next.price) * 100));
-      levelProgressBarEl.style.width = progress + "%";
       var missing = Math.max(0, next.price - state.coins);
       levelProgressNextEl.textContent = missing > 0
         ? "עוד " + missing + " מטבעות לדרגת " + next.name
         : "יש לך מספיק מטבעות לדרגת " + next.name + " - עברו לחנות";
     } else {
-      levelProgressBarEl.style.width = "100%";
       levelProgressNextEl.textContent = "הגעת לדרגה הגבוהה ביותר!";
     }
   }
@@ -416,6 +499,8 @@
 
     var laidToday = !!state.log[todayKey()];
     layBtn.disabled = laidToday;
+    document.getElementById("lay-fab").disabled = laidToday;
+    document.getElementById("lay-fab").classList.toggle("done", laidToday);
     if (laidToday) {
       statusEl.innerHTML = "כל הכבוד! הנחתם תפילין היום בשעה " +
         "<span id=\"target-time\">" + state.log[todayKey()] + "</span>.";
@@ -433,7 +518,7 @@
     renderLevelProgress();
   }
 
-  layBtn.addEventListener("click", function () {
+  function handleLayAction() {
     var key = todayKey();
     if (state.log[key]) return;
     if (!state.nusach) {
@@ -441,7 +526,10 @@
       return;
     }
     showScreen("prayer");
-  });
+  }
+
+  layBtn.addEventListener("click", handleLayAction);
+  document.getElementById("lay-fab").addEventListener("click", handleLayAction);
 
   document.getElementById("prayer-close").addEventListener("click", function () {
     showScreen("home");
@@ -466,6 +554,7 @@
         state.coins += bonus;
         state.weeklyMilestonesAwarded = milestone;
         toastMsg = "הנחת בהצלחה! 🙏 +50 מטבעות ובונוס שבועי של +" + bonus + "!";
+        pushNotification("השלמת " + milestone + " שבועות רצוף! קיבלת בונוס של +" + bonus + " מטבעות 🎉");
       }
     }
 
@@ -569,6 +658,7 @@
     renderLevelProgress();
     renderSettings();
     showToast("רכשת את דרגת \"" + tier.name + "\"! 🎉");
+    pushNotification("רכשת את דרגת \"" + tier.name + "\"! 🎉");
   }
 
   document.getElementById("shop-close").addEventListener("click", function () {
@@ -913,9 +1003,11 @@
   document.body.classList.toggle("dark", state.darkMode);
   renderHome();
   renderCoinBadge();
+  renderNotifBadges();
   if (state.onboardingComplete) {
     showScreen("home");
   } else {
     showScreen("onboarding");
   }
+  appReady = true;
 })();

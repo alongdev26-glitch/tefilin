@@ -18,6 +18,12 @@
     <span id="coin-balance">0</span>
   </div>
 
+  <button class="fab" id="lay-fab" aria-label="הנח תפילין">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v17"/><path d="M12 5c-1 3-4 4-6 3.5 0 5.5 1 9.5 6 13"/><path d="M12 5c1 3 4 4 6 3.5 0 5.5-1 9.5-6 13"/></svg>
+  </button>
+
+  <div class="confetti-layer" id="confetti-layer"></div>
+
   <!-- ===== ONBOARDING (FIRST RUN) ===== -->
   <section class="screen hidden" id="screen-onboarding">
     <div class="content onboarding-content">
@@ -40,7 +46,7 @@
     <header class="topbar">
       <button class="icon-btn" aria-label="תפריט" data-nav="settings"><span class="dots"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg></span></button>
       <h1 class="topbar-title">בית</h1>
-      <button class="icon-btn" aria-label="תפריט נוסף"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+      <button class="icon-btn notif-bell-btn" aria-label="התראות"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a6 6 0 0 1 12 0c0 4 1.5 5.5 2 6H4c.5-.5 2-2 2-6Z"/><path d="M9.5 19a2.5 2.5 0 0 0 5 0"/></svg><span class="badge-dot hidden"></span></button>
     </header>
 
     <div class="content">
@@ -59,9 +65,7 @@
       <div class="card level-progress-card" data-nav="shop">
         <div class="card-title">רמת החסידות שלך</div>
         <div class="level-progress-current" id="level-progress-current">ברונזה</div>
-        <div class="level-progress-bar-wrap">
-          <div class="level-progress-bar" id="level-progress-bar"></div>
-        </div>
+        <div class="stage-tracker" id="stage-tracker"></div>
         <div class="level-progress-next" id="level-progress-next">עוד 7 ימים רצופים לרמת כסף</div>
         <div class="level-progress-cta">לחצו לחנות הרמות ›</div>
       </div>
@@ -278,7 +282,7 @@
     <header class="topbar">
       <button class="icon-btn" aria-label="תפריט" data-nav="settings"><span class="dots"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg></span></button>
       <h1 class="topbar-title">תזכורת יומית</h1>
-      <button class="icon-btn" aria-label="תפריט נוסף"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+      <button class="icon-btn notif-bell-btn" aria-label="התראות"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a6 6 0 0 1 12 0c0 4 1.5 5.5 2 6H4c.5-.5 2-2 2-6Z"/><path d="M9.5 19a2.5 2.5 0 0 0 5 0"/></svg><span class="badge-dot hidden"></span></button>
     </header>
     <div class="content">
       <img class="hero-photo" src="icons/tefillin-photo.png" alt="תפילין">
@@ -339,7 +343,7 @@
     <header class="topbar">
       <button class="icon-btn" aria-label="פרופיל"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c1-3.5 4-5 7-5s6 1.5 7 5"/></svg></button>
       <h1 class="topbar-title">סטטיסטיקה ומעקב</h1>
-      <button class="icon-btn" aria-label="תפריט נוסף"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+      <button class="icon-btn notif-bell-btn" aria-label="התראות"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a6 6 0 0 1 12 0c0 4 1.5 5.5 2 6H4c.5-.5 2-2 2-6Z"/><path d="M9.5 19a2.5 2.5 0 0 0 5 0"/></svg><span class="badge-dot hidden"></span></button>
     </header>
     <div class="content">
       <h2 class="stats-title">ההתקדמות שלך</h2>
@@ -392,7 +396,7 @@
     <header class="topbar">
       <button class="icon-btn" aria-label="תפריט" data-nav="settings"><span class="dots"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="12" cy="19" r="1.7"/></svg></span></button>
       <h1 class="topbar-title">פרופיל והגדרות</h1>
-      <button class="icon-btn" aria-label="תפריט נוסף"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+      <button class="icon-btn notif-bell-btn" aria-label="התראות"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a6 6 0 0 1 12 0c0 4 1.5 5.5 2 6H4c.5-.5 2-2 2-6Z"/><path d="M9.5 19a2.5 2.5 0 0 0 5 0"/></svg><span class="badge-dot hidden"></span></button>
     </header>
     <div class="content">
       <div class="card profile-card">
@@ -466,6 +470,15 @@
 </div>
 
 <div class="toast" id="toast"></div>
+
+<div class="notif-sheet hidden" id="notif-sheet">
+  <div class="notif-sheet-backdrop" id="notif-sheet-backdrop"></div>
+  <div class="notif-sheet-panel">
+    <div class="notif-sheet-title">התראות</div>
+    <div class="notif-list" id="notif-list"></div>
+    <button class="share-cancel" id="notif-close" type="button">סגור</button>
+  </div>
+</div>
 
 <div class="share-sheet hidden" id="share-sheet">
   <div class="share-sheet-backdrop" id="share-sheet-backdrop"></div>
