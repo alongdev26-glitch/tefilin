@@ -227,6 +227,29 @@ body {
   margin-bottom: 12px;
 }
 
+.next-goal-callout {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--blue-light);
+  color: var(--blue);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 14px;
+  text-align: right;
+}
+
+.next-goal-callout svg { width: 17px; height: 17px; flex-shrink: 0; }
+
+.stage-summary {
+  font-size: 11.5px;
+  color: var(--text-sub);
+  text-align: center;
+  margin-bottom: 4px;
+}
+
 .stage-tracker {
   display: flex;
   align-items: center;
@@ -870,6 +893,75 @@ body {
 }
 
 .day-letter.today { color: var(--navy); }
+
+.compare-card { margin-bottom: 16px; }
+
+.compare-legend {
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  margin-bottom: 18px;
+  font-size: 12px;
+  color: var(--text-sub);
+}
+
+.compare-legend-item { display: flex; align-items: center; gap: 6px; }
+
+.compare-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+.compare-dot-today { background: var(--blue); }
+.compare-dot-avg { background: var(--text-sub); }
+
+.compare-axis-wrap { direction: ltr; padding: 0 4px; }
+
+.compare-axis {
+  position: relative;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--blue-light);
+  margin: 26px 0 8px;
+}
+
+.compare-marker {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid var(--card);
+}
+
+.compare-marker.hidden { display: none; }
+
+.compare-marker-today { background: var(--blue); z-index: 2; }
+.compare-marker-avg { background: var(--text-sub); z-index: 1; }
+
+.compare-marker-time {
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 10.5px;
+  font-weight: 700;
+  white-space: nowrap;
+  color: var(--text);
+}
+
+.compare-axis-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--text-sub);
+}
+
+.compare-empty {
+  text-align: center;
+  font-size: 12.5px;
+  color: var(--text-sub);
+  padding: 10px 0;
+}
+
+.compare-empty.hidden { display: none; }
 
 .tip-card { margin-bottom: 16px; background: var(--ink-dark); color: #fff; }
 .tip-head {

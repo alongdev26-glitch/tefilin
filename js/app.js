@@ -426,6 +426,8 @@
   var layBtnArrow = document.getElementById("lay-btn-arrow");
   var levelProgressCurrentEl = document.getElementById("level-progress-current");
   var stageTrackerEl = document.getElementById("stage-tracker");
+  var stageSummaryEl = document.getElementById("stage-summary");
+  var nextGoalTextEl = document.getElementById("next-goal-text");
   var levelProgressNextEl = document.getElementById("level-progress-next");
 
   // ---------- Devotion level tiers (purchased with coins) ----------
@@ -475,13 +477,20 @@
     levelProgressCurrentEl.textContent = current.name;
     renderStageTracker();
 
+    var achieved = state.purchasedTierIndex + 1;
+    var total = LEVEL_TIERS.length;
+    var percent = Math.round((achieved / total) * 100);
+    stageSummaryEl.textContent = achieved + "/" + total + " דרגות הושגו · " + percent + "%";
+
     if (next) {
+      nextGoalTextEl.textContent = "היעד הבא: " + next.name;
       var missing = Math.max(0, next.price - state.coins);
       levelProgressNextEl.textContent = missing > 0
         ? "עוד " + missing + " מטבעות לדרגת " + next.name
         : "יש לך מספיק מטבעות לדרגת " + next.name + " - עברו לחנות";
     } else {
-      levelProgressNextEl.textContent = "הגעת לדרגה הגבוהה ביותר!";
+      nextGoalTextEl.textContent = "הגעת לדרגה הגבוהה ביותר!";
+      levelProgressNextEl.textContent = "כל הכבוד, סיימת את כל המסע!";
     }
   }
 
@@ -700,6 +709,17 @@
   var monthlyCountEl = document.getElementById("monthly-count");
   var monthlyTotalEl = document.getElementById("monthly-total");
   var MONTHLY_WINDOW_DAYS = 30;
+  var compareEmptyEl = document.getElementById("compare-empty");
+  var compareMarkerTodayEl = document.getElementById("compare-marker-today");
+  var compareMarkerAvgEl = document.getElementById("compare-marker-avg");
+  var compareMarkerTodayTimeEl = document.getElementById("compare-marker-today-time");
+  var compareMarkerAvgTimeEl = document.getElementById("compare-marker-avg-time");
+  var compareAxisLabelsEl = document.getElementById("compare-axis-labels");
+  [4, 6, 8, 10, 12].forEach(function (h) {
+    var span = document.createElement("span");
+    span.textContent = pad(h) + ":00";
+    compareAxisLabelsEl.appendChild(span);
+  });
 
   var dayLetters = ["א", "ב", "ג", "ד", "ה", "ו", "ש"]; // Sun..Sat
 
@@ -726,6 +746,66 @@
     });
     var avg = Math.round(totalMinutes / entries.length);
     return pad(Math.floor(avg / 60)) + ":" + pad(avg % 60);
+  }
+
+  var COMPARE_AXIS_START_MIN = 4 * 60;  // 04:00
+  var COMPARE_AXIS_END_MIN = 12 * 60;   // 12:00
+
+  function timeToMinutes(t) {
+    var parts = t.split(":");
+    return parseInt(parts[0], 10) * 60 + parseInt(parts[1], 10);
+  }
+
+  function computeLast7DaysAverageTime() {
+    var d = new Date();
+    var minutesList = [];
+    for (var i = 1; i <= 7; i++) {
+      d.setDate(d.getDate() - (i === 1 ? 0 : 1));
+      var key = todayKey(d);
+      if (state.log[key]) minutesList.push(timeToMinutes(state.log[key]));
+    }
+    if (!minutesList.length) return null;
+    var total = minutesList.reduce(function (a, b) { return a + b; }, 0);
+    return Math.round(total / minutesList.length);
+  }
+
+  function minutesToPercent(minutes) {
+    var clamped = Math.max(COMPARE_AXIS_START_MIN, Math.min(COMPARE_AXIS_END_MIN, minutes));
+    return ((clamped - COMPARE_AXIS_START_MIN) / (COMPARE_AXIS_END_MIN - COMPARE_AXIS_START_MIN)) * 100;
+  }
+
+  function minutesToHHMM(minutes) {
+    return pad(Math.floor(minutes / 60)) + ":" + pad(minutes % 60);
+  }
+
+  function renderComparisonChart() {
+    var todayEntry = state.log[todayKey()];
+    var avgMinutes = computeLast7DaysAverageTime();
+
+    if (!todayEntry && avgMinutes == null) {
+      compareEmptyEl.classList.remove("hidden");
+      compareMarkerTodayEl.classList.add("hidden");
+      compareMarkerAvgEl.classList.add("hidden");
+      return;
+    }
+    compareEmptyEl.classList.add("hidden");
+
+    if (todayEntry) {
+      var todayMinutes = timeToMinutes(todayEntry);
+      compareMarkerTodayEl.classList.remove("hidden");
+      compareMarkerTodayEl.style.left = minutesToPercent(todayMinutes) + "%";
+      compareMarkerTodayTimeEl.textContent = todayEntry;
+    } else {
+      compareMarkerTodayEl.classList.add("hidden");
+    }
+
+    if (avgMinutes != null) {
+      compareMarkerAvgEl.classList.remove("hidden");
+      compareMarkerAvgEl.style.left = minutesToPercent(avgMinutes) + "%";
+      compareMarkerAvgTimeEl.textContent = minutesToHHMM(avgMinutes);
+    } else {
+      compareMarkerAvgEl.classList.add("hidden");
+    }
   }
 
   function computeMonthlyStats() {
@@ -776,6 +856,8 @@
     monthlyTotalEl.textContent = monthly.total;
     monthlyRingEl.style.background =
       "conic-gradient(var(--blue) " + monthly.percent + "%, #e2e8ee 0)";
+
+    renderComparisonChart();
   }
 
   document.getElementById("share-inspiration").addEventListener("click", function () {

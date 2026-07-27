@@ -65,7 +65,14 @@
       <div class="card level-progress-card" data-nav="shop">
         <div class="card-title">רמת החסידות שלך</div>
         <div class="level-progress-current" id="level-progress-current">ברונזה</div>
+
+        <div class="next-goal-callout">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.3 1 2.5h6c0-1.2.3-1.8 1-2.5A6 6 0 0 0 12 3Z"/></svg>
+          <span id="next-goal-text">היעד הבא: שחרית</span>
+        </div>
+
         <div class="stage-tracker" id="stage-tracker"></div>
+        <div class="stage-summary" id="stage-summary">1/7 דרגות הושגו · 14%</div>
         <div class="level-progress-next" id="level-progress-next">עוד 7 ימים רצופים לרמת כסף</div>
         <div class="level-progress-cta">לחצו לחנות הרמות ›</div>
       </div>
@@ -364,6 +371,22 @@
       <div class="card week-card">
         <div class="card-title">השבוע שלי</div>
         <div class="week-row" id="week-row"></div>
+      </div>
+
+      <div class="card compare-card">
+        <div class="card-title">השוואה יומית</div>
+        <div class="compare-legend">
+          <span class="compare-legend-item"><span class="compare-dot compare-dot-today"></span>היום</span>
+          <span class="compare-legend-item"><span class="compare-dot compare-dot-avg"></span>ממוצע 7 ימים</span>
+        </div>
+        <div class="compare-axis-wrap" id="compare-axis-wrap">
+          <div class="compare-axis">
+            <div class="compare-marker compare-marker-avg hidden" id="compare-marker-avg"><span class="compare-marker-time" id="compare-marker-avg-time"></span></div>
+            <div class="compare-marker compare-marker-today hidden" id="compare-marker-today"><span class="compare-marker-time" id="compare-marker-today-time"></span></div>
+          </div>
+          <div class="compare-axis-labels" id="compare-axis-labels"></div>
+        </div>
+        <div class="compare-empty hidden" id="compare-empty">עדיין אין מספיק נתונים להשוואה</div>
       </div>
 
       <div class="card tip-card">
