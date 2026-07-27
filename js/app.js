@@ -544,6 +544,29 @@
     showScreen("home");
   });
 
+  // ---------- Prayer jump menu ----------
+  var prayerJumpBtn = document.getElementById("prayer-jump-btn");
+  var prayerJumpMenu = document.getElementById("prayer-jump-menu");
+
+  prayerJumpBtn.addEventListener("click", function (e) {
+    e.stopPropagation();
+    prayerJumpMenu.classList.toggle("hidden");
+  });
+
+  document.querySelectorAll(".prayer-jump-item").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var target = document.getElementById(btn.dataset.target);
+      prayerJumpMenu.classList.add("hidden");
+      if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  });
+
+  document.addEventListener("click", function (e) {
+    if (!prayerJumpMenu.classList.contains("hidden") && !prayerJumpMenu.contains(e.target) && e.target !== prayerJumpBtn && !prayerJumpBtn.contains(e.target)) {
+      prayerJumpMenu.classList.add("hidden");
+    }
+  });
+
   document.getElementById("confirm-lay-btn").addEventListener("click", function () {
     var key = todayKey();
     state.log[key] = nowHHMM();

@@ -599,6 +599,46 @@ body {
 
 .prayer-full.hidden { display: none; }
 
+.prayer-jump-menu {
+  position: absolute;
+  top: 58px;
+  left: 14px;
+  z-index: 40;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  min-width: 190px;
+}
+
+.prayer-jump-menu.hidden { display: none; }
+
+.prayer-jump-item {
+  background: none;
+  border: none;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: right;
+  padding: 9px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.prayer-jump-item:hover, .prayer-jump-item:active { background: var(--ink-light); }
+
+.motzei-shabbat-header { color: var(--text-sub); }
+
+.motzei-shabbat-note {
+  margin: 0 0 16px;
+  font-size: 12px;
+  font-style: italic;
+}
+
 .prayer-full .amidah-item {
   margin-bottom: 14px;
 }
