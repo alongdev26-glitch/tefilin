@@ -45,7 +45,6 @@
         <h2 class="greeting">ברוכים הבאים!</h2>
         <p class="greeting-sub">איך נקרא לך?</p>
         <input type="text" id="onboarding-name-input" class="onboarding-input" placeholder="לדוגמה: ישראל" maxlength="40">
-        <input type="password" id="onboarding-password-input" class="onboarding-input" placeholder="בחר/י סיסמה" autocomplete="off">
       </div>
 
       <div class="onboarding-step hidden" id="onboarding-step-1">
@@ -123,6 +122,12 @@
         <div class="stage-summary" id="stage-summary">1/7 דרגות הושגו · 14%</div>
         <div class="level-progress-next" id="level-progress-next">עוד 7 ימים רצופים לרמת כסף</div>
         <div class="level-progress-cta">לחצו לחנות הרמות ›</div>
+      </div>
+
+      <div class="card tip-card">
+        <div class="tip-head"><svg class="inline-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.3 1 2.5h6c0-1.2.3-1.8 1-2.5A6 6 0 0 0 12 3Z"/></svg> טיפ יומי להשראה</div>
+        <p class="tip-quote" id="daily-tip-text"></p>
+        <button class="pill-btn" id="share-inspiration">שתף השראה</button>
       </div>
     </div>
   </section>
@@ -585,12 +590,6 @@
         <div class="compare-empty hidden" id="compare-empty">עדיין אין מספיק נתונים להשוואה</div>
       </div>
 
-      <div class="card tip-card">
-        <div class="tip-head"><svg class="inline-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.3 1 2.5h6c0-1.2.3-1.8 1-2.5A6 6 0 0 0 12 3Z"/></svg> טיפ יומי להשראה</div>
-        <p class="tip-quote">"הנחת תפילין מחברת אותנו למקור הכוח שלנו, וממשרת את הלב והמוח למטרה אחת קדושה."</p>
-        <button class="pill-btn" id="share-inspiration">שתף השראה</button>
-      </div>
-
       <div class="stat-grid">
         <div class="card stat-box">
           <div class="stat-value" id="avg-time">07:15</div>
@@ -623,7 +622,6 @@
         <div class="profile-text">
           <div class="profile-greeting">שלום, <span id="profile-name">ישראל ישראלי</span></div>
           <div class="profile-sub"><span id="profile-streak">42</span> ימים ברצף • המסע הרוחני שלי</div>
-          <input type="password" id="profile-password-input" class="profile-password-input" placeholder="סיסמה" autocomplete="off">
         </div>
       </div>
 

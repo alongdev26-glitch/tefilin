@@ -312,7 +312,7 @@
   }
 
   // ---------- Notifications & celebrations ----------
-  var CONFETTI_COLORS = ["#1c6fb0", "#2e9e5b", "#c9971f", "#9085e9", "#e34948"];
+  var CONFETTI_COLORS = ["#154a78", "#c9971f", "#7a1f2b", "#3a5a40", "#e8e2d0"];
   var confettiLayerEl = document.getElementById("confetti-layer");
   var notifSheetEl = document.getElementById("notif-sheet");
   var notifListEl = document.getElementById("notif-list");
@@ -496,6 +496,30 @@
     }
   }
 
+  var DAILY_TIPS = [
+    "הנחת תפילין מחברת אותנו למקור הכוח שלנו, וממשרת את הלב והמוח למטרה אחת קדושה.",
+    "תפילין נקראות \"פאר\" - העיטור היומי של יהודי המניח אותן באהבה.",
+    "מצוות תפילין נוהגת בכל יום חול, ומזכירה לנו את הקשר התמידי בינינו לבין בוראנו.",
+    "תפילין של יד כנגד הלב, תפילין של ראש כנגד המוח - לשעבד את הרגש והשכל לעבודת ה'.",
+    "כל זמן שהתפילין על ראשו ועל זרועו של אדם - הוא עניו וירא שמים, כדברי הרמב\"ם.",
+    "גם הנחה של דקות ספורות בבוקר עמוס שווה יותר מוויתור מוחלט. אל תוותרו, גם ביום קשה.",
+    "התמדה קטנה, יום אחרי יום, בונה הרגל של קדושה לכל החיים.",
+    "תפילין נקראות \"אות\" - סימן וברית בינינו לבין הקב\"ה.",
+    "לפני התפילה, קחו רגע לכוון את הלב - התפילין מזכירות לנו למה אנחנו כאן.",
+    "כל יום שמניחים בו תפילין הוא הזדמנות חדשה להתחבר מחדש."
+  ];
+
+  function getDailyTip() {
+    var d = new Date();
+    var start = new Date(d.getFullYear(), 0, 0);
+    var dayOfYear = Math.floor((d - start) / 86400000);
+    return DAILY_TIPS[dayOfYear % DAILY_TIPS.length];
+  }
+
+  function renderDailyTip() {
+    document.getElementById("daily-tip-text").textContent = "\"" + getDailyTip() + "\"";
+  }
+
   function greetingForHour(h) {
     if (h < 5) return "לילה טוב";
     if (h < 12) return "בוקר טוב";
@@ -507,6 +531,7 @@
   function renderHome() {
     var hour = new Date().getHours();
     greetingEl.textContent = greetingForHour(hour);
+    renderDailyTip();
 
     var laidToday = !!state.log[todayKey()];
     layBtn.disabled = laidToday;
@@ -757,7 +782,6 @@
 
   // ---------- Onboarding ----------
   var onboardingNameInput = document.getElementById("onboarding-name-input");
-  var onboardingPasswordInput = document.getElementById("onboarding-password-input");
   var onboardingBirthdayInput = document.getElementById("onboarding-birthday-input");
   var onboardingNextBtn = document.getElementById("onboarding-next-btn");
   var onboardingNextLabel = document.getElementById("onboarding-next-label");
@@ -818,7 +842,6 @@
     onboardingSelectedFreq = state.profile.weeklyFrequency ? String(state.profile.weeklyFrequency) : null;
     onboardingSelectedGoal = state.profile.goal || null;
     onboardingNameInput.value = state.profile.name || "";
-    onboardingPasswordInput.value = state.profile.password || "";
     onboardingBirthdayInput.value = state.profile.birthday || "";
     freqBtnEls.forEach(function (b) {
       b.classList.toggle("selected", b.getAttribute("data-value") === onboardingSelectedFreq);
@@ -835,7 +858,6 @@
   function completeOnboarding() {
     var typed = onboardingNameInput.value.trim();
     state.profile.name = typed || defaultState.profile.name;
-    state.profile.password = onboardingPasswordInput.value;
     state.profile.weeklyFrequency = onboardingSelectedFreq ? Number(onboardingSelectedFreq) : null;
     state.profile.goal = onboardingSelectedGoal;
     state.profile.birthday = onboardingBirthdayInput.value || null;
@@ -880,9 +902,6 @@
   });
 
   onboardingNameInput.addEventListener("keydown", function (e) {
-    if (e.key === "Enter") onboardingNextBtn.click();
-  });
-  onboardingPasswordInput.addEventListener("keydown", function (e) {
     if (e.key === "Enter") onboardingNextBtn.click();
   });
 
@@ -1049,7 +1068,7 @@
   }
 
   document.getElementById("share-inspiration").addEventListener("click", function () {
-    openShareSheet("הנחת תפילין מחברת אותנו למקור הכוח שלנו 🙏");
+    openShareSheet(getDailyTip() + " 🙏");
   });
 
   document.getElementById("share-app-row").addEventListener("click", function () {
@@ -1121,7 +1140,6 @@
   var levelValueEl = document.getElementById("level-value");
   var darkModeToggle = document.getElementById("dark-mode-toggle");
   var nusachSettingsValueEl = document.getElementById("nusach-settings-value");
-  var profilePasswordInput = document.getElementById("profile-password-input");
 
   function renderSettings() {
     profileNameEl.textContent = state.profile.name;
@@ -1130,17 +1148,11 @@
     levelValueEl.textContent = getCurrentTier().name;
     darkModeToggle.checked = state.darkMode;
     nusachSettingsValueEl.textContent = state.nusach ? NUSACH_LABELS[state.nusach] : "לא נבחר";
-    profilePasswordInput.value = state.profile.password || "";
   }
 
   darkModeToggle.addEventListener("change", function () {
     state.darkMode = darkModeToggle.checked;
     document.body.classList.toggle("dark", state.darkMode);
-    saveState();
-  });
-
-  profilePasswordInput.addEventListener("input", function () {
-    state.profile.password = profilePasswordInput.value;
     saveState();
   });
 

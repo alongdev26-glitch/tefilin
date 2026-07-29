@@ -8,8 +8,9 @@
   --text: #1c2b3a;
   --text-sub: #6b7785;
   --gold: #c9971f;
-  --shadow: 0 2px 10px rgba(20, 40, 70, 0.06);
-  --radius: 16px;
+  --shadow: 0 1px 8px rgba(20, 40, 70, 0.05);
+  --radius: 12px;
+  --heading-font: "Frank Ruhl Libre", serif;
   --ink: #2b2f33;
   --ink-light: #f3f4f5;
   --ink-dark: #1c2024;
@@ -89,6 +90,7 @@ body {
 }
 
 .topbar-title {
+  font-family: var(--heading-font);
   font-size: 17px;
   font-weight: 600;
   margin: 0;
@@ -167,6 +169,7 @@ body {
 }
 
 .greeting {
+  font-family: var(--heading-font);
   text-align: center;
   font-size: 20px;
   font-weight: 700;
@@ -186,7 +189,7 @@ body {
   background: var(--navy);
   color: #fff;
   border: none;
-  border-radius: 14px;
+  border-radius: 11px;
   padding: 16px;
   font-size: 16px;
   font-weight: 700;
@@ -195,7 +198,7 @@ body {
   justify-content: center;
   gap: 10px;
   cursor: pointer;
-  box-shadow: 0 4px 14px rgba(21,74,120,0.35);
+  box-shadow: 0 2px 8px rgba(21,74,120,0.22);
   transition: background 0.2s, transform 0.1s;
 }
 
@@ -350,10 +353,10 @@ body {
   width: 54px;
   height: 54px;
   border-radius: 50%;
-  background: var(--blue);
+  background: var(--navy);
   color: #fff;
   border: none;
-  box-shadow: 0 8px 20px rgba(28, 111, 176, 0.45);
+  box-shadow: 0 4px 12px rgba(21, 74, 120, 0.3);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -577,7 +580,7 @@ body {
   width: 100%;
   background: var(--card);
   border: 1px solid var(--blue-light);
-  border-radius: 14px;
+  border-radius: 11px;
   padding: 14px 16px;
   font-size: 14px;
   font-weight: 600;
@@ -627,7 +630,7 @@ body {
   gap: 6px;
   background: var(--card);
   border: 1px solid var(--blue-light);
-  border-radius: 14px;
+  border-radius: 11px;
   padding: 14px 10px;
   font-size: 12.5px;
   font-weight: 600;
@@ -719,7 +722,7 @@ body.dark .font-option { border-color: #2a3646; }
   width: 100%;
   background: var(--card);
   border: 1px solid var(--blue-light);
-  border-radius: 14px;
+  border-radius: 11px;
   padding: 16px;
   font-size: 15px;
   font-weight: 700;
@@ -742,6 +745,7 @@ body.dark .font-option { border-color: #2a3646; }
 .section-row.solo { justify-content: flex-start; }
 
 .section-title {
+  font-family: var(--heading-font);
   font-size: 15px;
   font-weight: 700;
   margin: 0;
@@ -939,7 +943,7 @@ body.dark .font-option { border-color: #2a3646; }
 .commit-box {
   margin-top: 18px;
   background: var(--blue-light);
-  border-radius: 14px;
+  border-radius: 11px;
   padding: 16px;
   text-align: center;
 }
@@ -1023,6 +1027,7 @@ body.dark .font-option { border-color: #2a3646; }
 
 /* ---------- Stats ---------- */
 .stats-title {
+  font-family: var(--heading-font);
   font-size: 19px;
   font-weight: 700;
   color: var(--navy);
@@ -1036,6 +1041,7 @@ body.dark .font-option { border-color: #2a3646; }
 }
 
 .card-title {
+  font-family: var(--heading-font);
   font-size: 13.5px;
   font-weight: 700;
   color: var(--navy);
@@ -1266,22 +1272,9 @@ body.dark .font-option { border-color: #2a3646; }
 
 .profile-photo svg { width: 28px; height: 28px; }
 
-.profile-greeting { font-weight: 700; color: var(--navy); font-size: 15px; }
+.profile-greeting { font-family: var(--heading-font); font-weight: 700; color: var(--navy); font-size: 15px; }
 .profile-sub { font-size: 12px; color: var(--text-sub); margin-top: 3px; }
 
-.profile-password-input {
-  width: 100%;
-  margin-top: 8px;
-  border: 1px solid #d3d9df;
-  border-radius: 8px;
-  padding: 6px 10px;
-  font-size: 13px;
-  font-family: inherit;
-  color: var(--text);
-  background: var(--card);
-}
-
-body.dark .profile-password-input { border-color: #2a3646; }
 
 .level-card {
   background: var(--navy);
@@ -1557,7 +1550,7 @@ body.dark .freq-btn { border-color: #2a3646; }
   gap: 6px;
   background: var(--ink-light);
   border: none;
-  border-radius: 14px;
+  border-radius: 11px;
   padding: 14px 6px;
   font-size: 12px;
   font-weight: 600;
