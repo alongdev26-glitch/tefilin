@@ -41,7 +41,9 @@
   }
 
   function saveState() {
+    state.updatedAt = Date.now();
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    pushStateToCloud();
   }
 
   var state = loadState();
@@ -1280,6 +1282,61 @@
       location.reload();
     });
   }
+
+  // ---------- Cloud sync (Firebase) ----------
+  var firestoreDb = null;
+  var firebaseUid = null;
+
+  function pushStateToCloud() {
+    if (!firestoreDb || !firebaseUid) return;
+    firestoreDb.collection("users").doc(firebaseUid).collection("state").doc("main")
+      .set({ state: state })
+      .catch(function (err) { console.warn("Firestore save failed", err); });
+  }
+
+  function mergeCloudState(remoteState) {
+    state = Object.assign({}, defaultState, remoteState, {
+      log: remoteState.log || {},
+      coinLog: remoteState.coinLog || {},
+      notifications: remoteState.notifications || []
+    });
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    document.body.classList.toggle("dark", state.darkMode);
+    renderHome();
+    renderCoinBadge();
+    renderNotifBadges();
+  }
+
+  function syncFromCloud() {
+    if (!firestoreDb || !firebaseUid) return;
+    firestoreDb.collection("users").doc(firebaseUid).collection("state").doc("main").get()
+      .then(function (doc) {
+        var remoteState = doc.exists ? doc.data().state : null;
+        if (remoteState && (remoteState.updatedAt || 0) > (state.updatedAt || 0)) {
+          mergeCloudState(remoteState);
+        } else {
+          pushStateToCloud();
+        }
+      })
+      .catch(function (err) { console.warn("Firestore load failed", err); });
+  }
+
+  function initFirebaseSync() {
+    if (typeof firebase === "undefined" || !window.FIREBASE_CONFIG) return;
+    firebase.initializeApp(window.FIREBASE_CONFIG);
+    firestoreDb = firebase.firestore();
+    firebase.auth().onAuthStateChanged(function (user) {
+      if (user) {
+        firebaseUid = user.uid;
+        syncFromCloud();
+      }
+    });
+    firebase.auth().signInAnonymously().catch(function (err) {
+      console.warn("Firebase anonymous sign-in failed", err);
+    });
+  }
+
+  initFirebaseSync();
 
   // ---------- Init ----------
   document.body.classList.toggle("dark", state.darkMode);

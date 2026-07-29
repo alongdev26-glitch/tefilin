@@ -1,9 +1,10 @@
-var CACHE_NAME = "tefillin-cache-v28";
+var CACHE_NAME = "tefillin-cache-v29";
 var ASSETS = [
   "./",
   "./index.html",
   "./css/style.css",
   "./js/app.js",
+  "./js/firebase-config.js",
   "./manifest.json"
 ];
 
