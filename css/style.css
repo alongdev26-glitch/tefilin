@@ -612,6 +612,100 @@ body {
 
 .onboarding-back-btn.hidden { display: none; }
 
+/* ---------- Text style step (before prayer) ---------- */
+.font-picker {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+
+.font-option {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  background: var(--card);
+  border: 1px solid var(--blue-light);
+  border-radius: 14px;
+  padding: 14px 10px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--navy);
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.font-option.selected {
+  background: var(--blue);
+  border-color: var(--blue);
+  color: #fff;
+}
+
+.font-option-sample { font-size: 22px; font-weight: 700; }
+
+.font-option-styled .font-option-sample { font-family: "Frank Ruhl Libre", serif; }
+
+.color-picker {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  margin-bottom: 4px;
+}
+
+.color-swatch {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+}
+
+.color-swatch.selected { border-color: var(--text); transform: scale(1.1); }
+
+.color-swatch-navy { background: #154a78; }
+.color-swatch-maroon { background: #7a1f2b; }
+.color-swatch-green { background: #1f6b3a; }
+.color-swatch-black { background: #1c2b3a; }
+
+.textstyle-preview {
+  padding: 20px 16px;
+  text-align: center;
+  font-size: 17px;
+  line-height: 1.8;
+}
+
+.textstyle-preview.style-font-styled { font-family: "Frank Ruhl Libre", serif; }
+.textstyle-preview.style-color-navy { color: #154a78; }
+.textstyle-preview.style-color-maroon { color: #7a1f2b; }
+.textstyle-preview.style-color-green { color: #1f6b3a; }
+.textstyle-preview.style-color-black { color: var(--text); }
+
+#screen-prayer.style-font-styled .prayer-line-main,
+#screen-prayer.style-font-styled .prayer-line-body,
+#screen-prayer.style-font-styled .blessing-text,
+#screen-prayer.style-font-styled .shema-para {
+  font-family: "Frank Ruhl Libre", serif;
+}
+
+#screen-prayer.style-color-navy .prayer-line-main,
+#screen-prayer.style-color-navy .prayer-line-body,
+#screen-prayer.style-color-navy .blessing-text,
+#screen-prayer.style-color-navy .shema-para { color: #154a78; }
+
+#screen-prayer.style-color-maroon .prayer-line-main,
+#screen-prayer.style-color-maroon .prayer-line-body,
+#screen-prayer.style-color-maroon .blessing-text,
+#screen-prayer.style-color-maroon .shema-para { color: #7a1f2b; }
+
+#screen-prayer.style-color-green .prayer-line-main,
+#screen-prayer.style-color-green .prayer-line-body,
+#screen-prayer.style-color-green .blessing-text,
+#screen-prayer.style-color-green .shema-para { color: #1f6b3a; }
+
+body.dark .font-option { border-color: #2a3646; }
+
 .nusach-intro { margin: 4px 0 4px; text-align: center; }
 
 .nusach-list {

@@ -21,6 +21,7 @@
     coinLog: {}, // { "YYYY-MM-DD": true } - dedup guard so daily coins are only ever awarded once per date
     lastStreakSeen: 0,
     weeklyMilestonesAwarded: 0,
+    textStyle: { font: "default", color: "navy" },
     notifications: [] // { id, message, createdAt, read }
   };
 
@@ -132,6 +133,7 @@
     settings: document.getElementById("screen-settings"),
     nusach: document.getElementById("screen-nusach"),
     shop: document.getElementById("screen-shop"),
+    textstyle: document.getElementById("screen-textstyle"),
     prayer: document.getElementById("screen-prayer")
   };
 
@@ -145,10 +147,10 @@
     navBtns.forEach(function (btn) {
       btn.classList.toggle("active", btn.dataset.nav === name);
     });
-    bottomNav.classList.toggle("hidden", name === "prayer" || name === "onboarding" || name === "nusach" || name === "shop");
+    bottomNav.classList.toggle("hidden", name === "prayer" || name === "onboarding" || name === "nusach" || name === "shop" || name === "textstyle");
     document.getElementById("coin-badge").classList.toggle("hidden", name === "onboarding");
     document.getElementById("lay-fab").classList.toggle("hidden",
-      name === "home" || name === "onboarding" || name === "nusach" || name === "prayer");
+      name === "home" || name === "onboarding" || name === "nusach" || name === "prayer" || name === "textstyle");
     if (name === "stats") renderStats();
     if (name === "settings") renderSettings();
     if (name === "reminders") renderReminders();
@@ -534,7 +536,7 @@
       openNusachPicker("home");
       return;
     }
-    showScreen("prayer");
+    openTextStyleStep();
   }
 
   layBtn.addEventListener("click", handleLayAction);
@@ -624,13 +626,70 @@
         renderSettings();
         showScreen("settings");
       } else {
-        showScreen("prayer");
+        openTextStyleStep();
       }
     });
   });
 
   document.getElementById("nusach-settings-row").addEventListener("click", function () {
     openNusachPicker("settings");
+  });
+
+  // ---------- Text style (before prayer) ----------
+  var textStyleFontBtns = document.querySelectorAll("#font-picker .font-option");
+  var textStyleColorBtns = document.querySelectorAll("#color-picker .color-swatch");
+  var textStylePreview = document.getElementById("textstyle-preview");
+  var textStylePendingFont = "default";
+  var textStylePendingColor = "navy";
+
+  function renderTextStylePreview() {
+    textStylePreview.className = "card textstyle-preview style-font-" + textStylePendingFont + " style-color-" + textStylePendingColor;
+  }
+
+  function openTextStyleStep() {
+    textStylePendingFont = state.textStyle.font;
+    textStylePendingColor = state.textStyle.color;
+    textStyleFontBtns.forEach(function (b) {
+      b.classList.toggle("selected", b.getAttribute("data-font") === textStylePendingFont);
+    });
+    textStyleColorBtns.forEach(function (b) {
+      b.classList.toggle("selected", b.getAttribute("data-color") === textStylePendingColor);
+    });
+    renderTextStylePreview();
+    showScreen("textstyle");
+  }
+
+  function applyTextStyleToPrayerScreen() {
+    screens.prayer.className = "screen hidden style-font-" + state.textStyle.font + " style-color-" + state.textStyle.color;
+  }
+
+  textStyleFontBtns.forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      textStylePendingFont = btn.getAttribute("data-font");
+      textStyleFontBtns.forEach(function (b) { b.classList.remove("selected"); });
+      btn.classList.add("selected");
+      renderTextStylePreview();
+    });
+  });
+
+  textStyleColorBtns.forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      textStylePendingColor = btn.getAttribute("data-color");
+      textStyleColorBtns.forEach(function (b) { b.classList.remove("selected"); });
+      btn.classList.add("selected");
+      renderTextStylePreview();
+    });
+  });
+
+  document.getElementById("textstyle-close").addEventListener("click", function () {
+    showScreen("home");
+  });
+
+  document.getElementById("textstyle-continue-btn").addEventListener("click", function () {
+    state.textStyle = { font: textStylePendingFont, color: textStylePendingColor };
+    saveState();
+    applyTextStyleToPrayerScreen();
+    showScreen("prayer");
   });
 
   // ---------- Shop ----------

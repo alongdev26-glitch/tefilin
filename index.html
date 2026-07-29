@@ -8,6 +8,9 @@
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icons/icon-192.png" type="image/png">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -168,6 +171,47 @@
         <button class="nusach-option" data-nusach="moroccan">מרוקאי</button>
         <button class="nusach-option" data-nusach="mizrachi">עדות המזרח</button>
       </div>
+    </div>
+  </section>
+
+  <!-- ===== TEXT STYLE (before prayer) ===== -->
+  <section class="screen hidden" id="screen-textstyle">
+    <header class="topbar">
+      <button class="icon-btn" id="textstyle-close" aria-label="חזרה"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      <h1 class="topbar-title">איך תרצו לקרוא?</h1>
+      <span class="icon-btn" style="visibility:hidden"></span>
+    </header>
+    <div class="content textstyle-content">
+      <p class="body-text nusach-intro">בחרו פונט וצבע לטקסט התפילה</p>
+
+      <h3 class="section-title">פונט</h3>
+      <div class="font-picker" id="font-picker">
+        <button type="button" class="font-option" data-font="default">
+          <span class="font-option-sample">אבג</span>
+          <span>כתב האפליקציה</span>
+        </button>
+        <button type="button" class="font-option font-option-styled" data-font="styled">
+          <span class="font-option-sample">אבג</span>
+          <span>כתב מסוגנן</span>
+        </button>
+      </div>
+
+      <h3 class="section-title">צבע טקסט</h3>
+      <div class="color-picker" id="color-picker">
+        <button type="button" class="color-swatch color-swatch-navy" data-color="navy" aria-label="כחול"></button>
+        <button type="button" class="color-swatch color-swatch-maroon" data-color="maroon" aria-label="בורדו"></button>
+        <button type="button" class="color-swatch color-swatch-green" data-color="green" aria-label="ירוק"></button>
+        <button type="button" class="color-swatch color-swatch-black" data-color="black" aria-label="שחור"></button>
+      </div>
+
+      <div class="card textstyle-preview" id="textstyle-preview">
+        <p id="textstyle-preview-text">שְׁמַע יִשְׂרָאֵל יְהֹוָה אֱלֹהֵינוּ יְהֹוָה אֶחָד</p>
+      </div>
+
+      <button class="cta-btn" id="textstyle-continue-btn">
+        <span>המשך לתפילה</span>
+        <span class="cta-arrow">◂</span>
+      </button>
     </div>
   </section>
 
