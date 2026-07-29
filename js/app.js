@@ -4,7 +4,7 @@
   var STORAGE_KEY = "tefillin-app-state-v1";
 
   var defaultState = {
-    profile: { name: "ישראל ישראלי" },
+    profile: { name: "ישראל ישראלי", weeklyFrequency: null, goal: null, birthday: null },
     onboardingComplete: false,
     nusach: null,
     reminderEnabled: true,
@@ -636,8 +636,7 @@
   // ---------- Shop ----------
   var shopTierListEl = document.getElementById("shop-tier-list");
 
-  var COIN_ICON_SVG =
-    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5v9M9.5 9.5c0-1 .8-1.5 2.5-1.5s2.5.6 2.5 1.5-1 1.3-2.5 1.5c-1.7.2-2.5.6-2.5 1.5s.8 1.5 2.5 1.5 2.5-.5 2.5-1.5"/></svg>';
+  var COIN_ICON_SVG = '<span class="coin-emoji coin-emoji-inline">🪙</span>';
   var CHECK_ICON_SVG =
     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l5 5L20 6"/></svg>';
   var LOCK_ICON_SVG =
@@ -700,12 +699,64 @@
   // ---------- Onboarding ----------
   var onboardingNameInput = document.getElementById("onboarding-name-input");
   var onboardingPasswordInput = document.getElementById("onboarding-password-input");
-  var onboardingSubmitBtn = document.getElementById("onboarding-submit-btn");
+  var onboardingBirthdayInput = document.getElementById("onboarding-birthday-input");
+  var onboardingNextBtn = document.getElementById("onboarding-next-btn");
+  var onboardingNextLabel = document.getElementById("onboarding-next-label");
+  var onboardingBackBtn = document.getElementById("onboarding-back-btn");
+  var onboardingStepEls = document.querySelectorAll(".onboarding-step");
+  var onboardingDotEls = document.querySelectorAll("#onboarding-dots .onboarding-dot");
+  var freqBtnEls = document.querySelectorAll("#freq-picker .freq-btn");
+  var goalBtnEls = document.querySelectorAll("#goal-list .goal-option");
+
+  var ONBOARDING_STEP_COUNT = onboardingStepEls.length;
+  var onboardingStepIndex = 0;
+  var onboardingSelectedFreq = null;
+  var onboardingSelectedGoal = null;
+
+  function canAdvanceOnboarding() {
+    if (onboardingStepIndex === 1) return !!onboardingSelectedFreq;
+    if (onboardingStepIndex === 2) return !!onboardingSelectedGoal;
+    return true;
+  }
+
+  function renderOnboardingStep() {
+    onboardingStepEls.forEach(function (el, i) {
+      el.classList.toggle("hidden", i !== onboardingStepIndex);
+    });
+    onboardingDotEls.forEach(function (dot, i) {
+      dot.classList.toggle("active", i === onboardingStepIndex);
+      dot.classList.toggle("done", i < onboardingStepIndex);
+    });
+    onboardingBackBtn.classList.toggle("hidden", onboardingStepIndex === 0);
+    onboardingNextLabel.textContent = onboardingStepIndex === ONBOARDING_STEP_COUNT - 1 ? "סיום" : "המשך";
+    onboardingNextBtn.disabled = !canAdvanceOnboarding();
+  }
+
+  freqBtnEls.forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      onboardingSelectedFreq = btn.getAttribute("data-value");
+      freqBtnEls.forEach(function (b) { b.classList.remove("selected"); });
+      btn.classList.add("selected");
+      renderOnboardingStep();
+    });
+  });
+
+  goalBtnEls.forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      onboardingSelectedGoal = btn.getAttribute("data-value");
+      goalBtnEls.forEach(function (b) { b.classList.remove("selected"); });
+      btn.classList.add("selected");
+      renderOnboardingStep();
+    });
+  });
 
   function completeOnboarding() {
     var typed = onboardingNameInput.value.trim();
     state.profile.name = typed || defaultState.profile.name;
     state.profile.password = onboardingPasswordInput.value;
+    state.profile.weeklyFrequency = onboardingSelectedFreq ? Number(onboardingSelectedFreq) : null;
+    state.profile.goal = onboardingSelectedGoal;
+    state.profile.birthday = onboardingBirthdayInput.value || null;
     state.onboardingComplete = true;
     state.coins += 150; // 100 starting + 50 first-week bonus
     saveState();
@@ -715,13 +766,30 @@
     showScreen("home");
   }
 
-  onboardingSubmitBtn.addEventListener("click", completeOnboarding);
+  onboardingNextBtn.addEventListener("click", function () {
+    if (!canAdvanceOnboarding()) return;
+    if (onboardingStepIndex === ONBOARDING_STEP_COUNT - 1) {
+      completeOnboarding();
+      return;
+    }
+    onboardingStepIndex++;
+    renderOnboardingStep();
+  });
+
+  onboardingBackBtn.addEventListener("click", function () {
+    if (onboardingStepIndex === 0) return;
+    onboardingStepIndex--;
+    renderOnboardingStep();
+  });
+
   onboardingNameInput.addEventListener("keydown", function (e) {
-    if (e.key === "Enter") completeOnboarding();
+    if (e.key === "Enter") onboardingNextBtn.click();
   });
   onboardingPasswordInput.addEventListener("keydown", function (e) {
-    if (e.key === "Enter") completeOnboarding();
+    if (e.key === "Enter") onboardingNextBtn.click();
   });
+
+  renderOnboardingStep();
 
   // ---------- Stats ----------
   var weekRowEl = document.getElementById("week-row");

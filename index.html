@@ -14,7 +14,7 @@
 <div class="phone">
 
   <div class="coin-badge" id="coin-badge" data-nav="settings">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5v9M9.5 9.5c0-1 .8-1.5 2.5-1.5s2.5.6 2.5 1.5-1 1.3-2.5 1.5c-1.7.2-2.5.6-2.5 1.5s.8 1.5 2.5 1.5 2.5-.5 2.5-1.5"/></svg>
+    <span class="coin-emoji">🪙</span>
     <span id="coin-balance">0</span>
   </div>
 
@@ -30,14 +30,59 @@
       <div class="hero-icon-wrap">
         <img class="hero-icon" src="icons/icon-192.png" alt="תזכורת תפילין">
       </div>
-      <h2 class="greeting">ברוכים הבאים!</h2>
-      <p class="greeting-sub">איך נקרא לך?</p>
-      <input type="text" id="onboarding-name-input" class="onboarding-input" placeholder="לדוגמה: ישראל" maxlength="40">
-      <input type="password" id="onboarding-password-input" class="onboarding-input" placeholder="בחר/י סיסמה" autocomplete="off">
-      <button class="cta-btn" id="onboarding-submit-btn">
-        <span>המשך</span>
-        <span class="cta-arrow">◂</span>
-      </button>
+
+      <div class="onboarding-dots" id="onboarding-dots">
+        <span class="onboarding-dot"></span>
+        <span class="onboarding-dot"></span>
+        <span class="onboarding-dot"></span>
+        <span class="onboarding-dot"></span>
+      </div>
+
+      <div class="onboarding-step" id="onboarding-step-0">
+        <h2 class="greeting">ברוכים הבאים!</h2>
+        <p class="greeting-sub">איך נקרא לך?</p>
+        <input type="text" id="onboarding-name-input" class="onboarding-input" placeholder="לדוגמה: ישראל" maxlength="40">
+        <input type="password" id="onboarding-password-input" class="onboarding-input" placeholder="בחר/י סיסמה" autocomplete="off">
+      </div>
+
+      <div class="onboarding-step hidden" id="onboarding-step-1">
+        <h2 class="greeting">כמה פעמים בשבוע?</h2>
+        <p class="greeting-sub">כמה פעמים בשבוע את/ה מניח/ה תפילין?</p>
+        <div class="freq-picker" id="freq-picker">
+          <button type="button" class="freq-btn" data-value="1">1</button>
+          <button type="button" class="freq-btn" data-value="2">2</button>
+          <button type="button" class="freq-btn" data-value="3">3</button>
+          <button type="button" class="freq-btn" data-value="4">4</button>
+          <button type="button" class="freq-btn" data-value="5">5</button>
+          <button type="button" class="freq-btn" data-value="6">6</button>
+        </div>
+      </div>
+
+      <div class="onboarding-step hidden" id="onboarding-step-2">
+        <h2 class="greeting">מה המטרה שלך?</h2>
+        <p class="greeting-sub">מה הכי מתאר את המטרה שלך באפליקציה?</p>
+        <div class="goal-list" id="goal-list">
+          <button type="button" class="goal-option" data-value="return">לחזור להניח תפילין</button>
+          <button type="button" class="goal-option" data-value="daily">להניח תפילין באופן קבוע, על בסיס יום־יומי</button>
+          <button type="button" class="goal-option" data-value="occasional">להניח תפילין מדי פעם</button>
+          <button type="button" class="goal-option" data-value="closer">להתקרב לה'</button>
+          <button type="button" class="goal-option" data-value="just">סתם להניח תפילין</button>
+        </div>
+      </div>
+
+      <div class="onboarding-step hidden" id="onboarding-step-3">
+        <h2 class="greeting">תאריך יום הולדת</h2>
+        <p class="greeting-sub">מתי יום ההולדת שלך? (אופציונלי)</p>
+        <input type="date" id="onboarding-birthday-input" class="onboarding-input">
+      </div>
+
+      <div class="onboarding-nav">
+        <button class="cta-btn" id="onboarding-next-btn">
+          <span id="onboarding-next-label">המשך</span>
+          <span class="cta-arrow">◂</span>
+        </button>
+        <button type="button" class="onboarding-back-btn hidden" id="onboarding-back-btn">חזרה</button>
+      </div>
     </div>
   </section>
 
