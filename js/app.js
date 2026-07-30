@@ -592,7 +592,14 @@
       openNusachPicker("home");
       return;
     }
-    openTextStyleStep();
+    // Only show text style configuration on first time
+    if (state.textStyle.font === "default") {
+      openTextStyleStep();
+    } else {
+      applyTextStyleToPrayerScreen();
+      renderPrayerSections();
+      showScreen("prayer");
+    }
   }
 
   layBtn.addEventListener("click", handleLayAction);
@@ -692,18 +699,24 @@
     openNusachPicker("settings");
   });
 
+  document.getElementById("textstyle-settings-row").addEventListener("click", function () {
+    openTextStyleStep("settings");
+  });
+
   // ---------- Text style (before prayer) ----------
   var textStyleFontBtns = document.querySelectorAll("#font-picker .font-option");
   var textStyleColorBtns = document.querySelectorAll("#color-picker .color-swatch");
   var textStylePreview = document.getElementById("textstyle-preview");
   var textStylePendingFont = "default";
   var textStylePendingColor = "navy";
+  var textStyleOpenedFrom = "lay";
 
   function renderTextStylePreview() {
     textStylePreview.className = "card textstyle-preview style-font-" + textStylePendingFont + " style-color-" + textStylePendingColor;
   }
 
-  function openTextStyleStep() {
+  function openTextStyleStep(openedFrom) {
+    textStyleOpenedFrom = openedFrom || "lay";
     textStylePendingFont = state.textStyle.font;
     textStylePendingColor = state.textStyle.color;
     textStyleFontBtns.forEach(function (b) {
@@ -739,14 +752,20 @@
   });
 
   document.getElementById("textstyle-close").addEventListener("click", function () {
-    showScreen("home");
+    showScreen(textStyleOpenedFrom === "settings" ? "settings" : "home");
   });
 
   document.getElementById("textstyle-continue-btn").addEventListener("click", function () {
     state.textStyle = { font: textStylePendingFont, color: textStylePendingColor };
     saveState();
-    applyTextStyleToPrayerScreen();
-    showScreen("prayer");
+    if (textStyleOpenedFrom === "settings") {
+      renderSettings();
+      showScreen("settings");
+    } else {
+      applyTextStyleToPrayerScreen();
+      renderPrayerSections();
+      showScreen("prayer");
+    }
   });
 
   // ---------- Shop ----------
@@ -1180,6 +1199,9 @@
     levelValueEl.textContent = getCurrentTier().name;
     darkModeToggle.checked = state.darkMode;
     nusachSettingsValueEl.textContent = state.nusach ? NUSACH_LABELS[state.nusach] : "לא נבחר";
+    var fontLabel = state.textStyle.font === "styled" ? "כתב מסוגנן" : "כתב האפליקציה";
+    var colorLabel = { navy: "כחול", maroon: "בורדו", green: "ירוק", black: "שחור" }[state.textStyle.color] || "כחול";
+    document.getElementById("textstyle-settings-value").textContent = fontLabel + " • " + colorLabel;
   }
 
   darkModeToggle.addEventListener("change", function () {
