@@ -159,7 +159,7 @@
     if (name === "shop") renderShop();
     if (name === "prayer") {
       renderBlessingCard();
-      renderAmidahCard();
+      renderPrayerSections();
       var prayerContent = screens.prayer.querySelector(".content");
       if (prayerContent) prayerContent.scrollTop = 0;
     }
@@ -174,83 +174,109 @@
     });
   });
 
-  // ---------- Full prayer texts ----------
-  var SHEMA_FULL_HTML =
-    '<p class="shema-para">' +
-      'שְׁמַע יִשְׂרָאֵל יְהֹוָה אֱלֹהֵינוּ יְהֹוָה אֶחָד: (בלחש: בָּרוּךְ שֵׁם כְּבוֹד מַלְכוּתוֹ לְעוֹלָם וָעֶד:) ' +
-      'וְאָהַבְתָּ אֵת יְהֹוָה אֱלֹהֶיךָ בְּכָל לְבָבְךָ וּבְכָל נַפְשְׁךָ וּבְכָל מְאֹדֶךָ. וְהָיוּ הַדְּבָרִים הָאֵלֶּה ' +
-      'אֲשֶׁר אָנֹכִי מְצַוְּךָ הַיּוֹם עַל לְבָבֶךָ. וְשִׁנַּנְתָּם לְבָנֶיךָ וְדִבַּרְתָּ בָּם בְּשִׁבְתְּךָ בְּבֵיתֶךָ וּבְלֶכְתְּךָ ' +
-      'בַדֶּרֶךְ וּבְשָׁכְבְּךָ וּבְקוּמֶךָ. וּקְשַׁרְתָּם לְאוֹת עַל יָדֶךָ וְהָיוּ לְטֹטָפֹת בֵּין עֵינֶיךָ. וּכְתַבְתָּם עַל מְזֻזוֹת ' +
-      'בֵּיתֶךָ וּבִשְׁעָרֶיךָ.' +
-    '</p>' +
-    '<p class="shema-para">' +
-      'וְהָיָה אִם שָׁמֹעַ תִּשְׁמְעוּ אֶל מִצְוֹתַי אֲשֶׁר אָנֹכִי מְצַוֶּה אֶתְכֶם הַיּוֹם, לְאַהֲבָה אֶת יְהֹוָה אֱלֹהֵיכֶם ' +
-      'וּלְעָבְדוֹ בְּכָל לְבַבְכֶם וּבְכָל נַפְשְׁכֶם. וְנָתַתִּי מְטַר אַרְצְכֶם בְּעִתּוֹ יוֹרֶה וּמַלְקוֹשׁ, וְאָסַפְתָּ דְגָנֶךָ ' +
-      'וְתִירֹשְׁךָ וְיִצְהָרֶךָ. וְנָתַתִּי עֵשֶׂב בְּשָׂדְךָ לִבְהֶמְתֶּךָ וְאָכַלְתָּ וְשָׂבָעְתָּ. הִשָּׁמְרוּ לָכֶם פֶּן יִפְתֶּה ' +
-      'לְבַבְכֶם וְסַרְתֶּם וַעֲבַדְתֶּם אֱלֹהִים אֲחֵרִים וְהִשְׁתַּחֲוִיתֶם לָהֶם. וְחָרָה אַף יְהֹוָה בָּכֶם וְעָצַר אֶת הַשָּׁמַיִם ' +
-      'וְלֹא יִהְיֶה מָטָר וְהָאֲדָמָה לֹא תִתֵּן אֶת יְבוּלָהּ, וַאֲבַדְתֶּם מְהֵרָה מֵעַל הָאָרֶץ הַטֹּבָה אֲשֶׁר יְהֹוָה נֹתֵן ' +
-      'לָכֶם. וְשַׂמְתֶּם אֶת דְּבָרַי אֵלֶּה עַל לְבַבְכֶם וְעַל נַפְשְׁכֶם, וּקְשַׁרְתֶּם אֹתָם לְאוֹת עַל יֶדְכֶם וְהָיוּ ' +
-      'לְטוֹטָפֹת בֵּין עֵינֵיכֶם. וְלִמַּדְתֶּם אֹתָם אֶת בְּנֵיכֶם לְדַבֵּר בָּם, בְּשִׁבְתְּךָ בְּבֵיתֶךָ וּבְלֶכְתְּךָ בַדֶּרֶךְ ' +
-      'וּבְשָׁכְבְּךָ וּבְקוּמֶךָ. וּכְתַבְתָּם עַל מְזוּזוֹת בֵּיתֶךָ וּבִשְׁעָרֶיךָ. לְמַעַן יִרְבּוּ יְמֵיכֶם וִימֵי בְנֵיכֶם עַל ' +
-      'הָאֲדָמָה אֲשֶׁר נִשְׁבַּע יְהֹוָה לַאֲבֹתֵיכֶם לָתֵת לָהֶם, כִּימֵי הַשָּׁמַיִם עַל הָאָרֶץ.' +
-    '</p>' +
-    '<p class="shema-para">' +
-      'וַיֹּאמֶר יְהֹוָה אֶל מֹשֶׁה לֵּאמֹר. דַּבֵּר אֶל בְּנֵי יִשְׂרָאֵל וְאָמַרְתָּ אֲלֵהֶם וְעָשׂוּ לָהֶם צִיצִת עַל כַּנְפֵי ' +
-      'בִגְדֵיהֶם לְדֹרֹתָם, וְנָתְנוּ עַל צִיצִת הַכָּנָף פְּתִיל תְּכֵלֶת. וְהָיָה לָכֶם לְצִיצִת וּרְאִיתֶם אֹתוֹ וּזְכַרְתֶּם ' +
-      'אֶת כָּל מִצְוֹת יְהֹוָה וַעֲשִׂיתֶם אֹתָם, וְלֹא תָתוּרוּ אַחֲרֵי לְבַבְכֶם וְאַחֲרֵי עֵינֵיכֶם אֲשֶׁר אַתֶּם זֹנִים ' +
-      'אַחֲרֵיהֶם. לְמַעַן תִּזְכְּרוּ וַעֲשִׂיתֶם אֶת כָּל מִצְוֹתָי, וִהְיִיתֶם קְדֹשִׁים לֵאלֹהֵיכֶם. אֲנִי יְהֹוָה אֱלֹהֵיכֶם ' +
-      'אֲשֶׁר הוֹצֵאתִי אֶתְכֶם מֵאֶרֶץ מִצְרַיִם לִהְיוֹת לָכֶם לֵאלֹהִים, אֲנִי יְהֹוָה אֱלֹהֵיכֶם. יְהֹוָה אֱלֹהֵיכֶם אֱמֶת.' +
-    '</p>';
+  // ---------- Prayer text rendering ----------
+  // The full liturgical text lives in js/prayers.js, generated from the Sefaria
+  // API (CC-BY, the Metsudah siddur) rather than written by hand - so each nusach
+  // is complete and accurate. Regenerate with scripts/build-prayers.js.
+  var SEFARIA_BASE = "https://www.sefaria.org/";
 
-  var AMIDAH_ITEMS = [
-    ["אבות", "בָּרוּךְ אַתָּה יְהֹוָה אֱלֹהֵינוּ וֵאלֹהֵי אֲבוֹתֵינוּ, אֱלֹהֵי אַבְרָהָם אֱלֹהֵי יִצְחָק וֵאלֹהֵי יַעֲקֹב, הָאֵל הַגָּדוֹל הַגִּבּוֹר וְהַנּוֹרָא, אֵל עֶלְיוֹן, גּוֹמֵל חֲסָדִים טוֹבִים וְקֹנֵה הַכֹּל, וְזוֹכֵר חַסְדֵי אָבוֹת וּמֵבִיא גוֹאֵל לִבְנֵי בְנֵיהֶם לְמַעַן שְׁמוֹ בְּאַהֲבָה. מֶלֶךְ עוֹזֵר וּמוֹשִׁיעַ וּמָגֵן. בָּרוּךְ אַתָּה יְהֹוָה, מָגֵן אַבְרָהָם."],
-    ["גבורות", "אַתָּה גִּבּוֹר לְעוֹלָם אֲדֹנָי, מְחַיֶּה מֵתִים אַתָּה, רַב לְהוֹשִׁיעַ. מְכַלְכֵּל חַיִּים בְּחֶסֶד, מְחַיֶּה מֵתִים בְּרַחֲמִים רַבִּים, סוֹמֵךְ נוֹפְלִים וְרוֹפֵא חוֹלִים וּמַתִּיר אֲסוּרִים, וּמְקַיֵּם אֱמוּנָתוֹ לִישֵׁנֵי עָפָר. מִי כָמוֹךָ בַּעַל גְּבוּרוֹת וּמִי דּוֹמֶה לָּךְ, מֶלֶךְ מֵמִית וּמְחַיֶּה וּמַצְמִיחַ יְשׁוּעָה. וְנֶאֱמָן אַתָּה לְהַחֲיוֹת מֵתִים. בָּרוּךְ אַתָּה יְהֹוָה, מְחַיֵּה הַמֵּתִים."],
-    ["קדושת השם", "אַתָּה קָדוֹשׁ וְשִׁמְךָ קָדוֹשׁ, וּקְדוֹשִׁים בְּכָל יוֹם יְהַלְלוּךָ סֶּלָה. בָּרוּךְ אַתָּה יְהֹוָה, הָאֵל הַקָּדוֹשׁ."],
-    ["בינה", "אַתָּה חוֹנֵן לְאָדָם דַּעַת וּמְלַמֵּד לֶאֱנוֹשׁ בִּינָה. חָנֵּנוּ מֵאִתְּךָ חָכְמָה בִּינָה וָדָעַת. בָּרוּךְ אַתָּה יְהֹוָה, חוֹנֵן הַדָּעַת."],
-    ["תשובה", "הֲשִׁיבֵנוּ אָבִינוּ לְתוֹרָתֶךָ, וְקָרְבֵנוּ מַלְכֵּנוּ לַעֲבוֹדָתֶךָ, וְהַחֲזִירֵנוּ בִּתְשׁוּבָה שְׁלֵמָה לְפָנֶיךָ. בָּרוּךְ אַתָּה יְהֹוָה, הָרוֹצֶה בִּתְשׁוּבָה."],
-    ["סליחה", "סְלַח לָנוּ אָבִינוּ כִּי חָטָאנוּ, מְחַל לָנוּ מַלְכֵּנוּ כִּי פָשָׁעְנוּ, כִּי מוֹחֵל וְסוֹלֵחַ אָתָּה. בָּרוּךְ אַתָּה יְהֹוָה, חַנּוּן הַמַּרְבֶּה לִסְלוֹחַ."],
-    ["גאולה", "רְאֵה נָא בְעָנְיֵנוּ וְרִיבָה רִיבֵנוּ, וּגְאָלֵנוּ מְהֵרָה לְמַעַן שְׁמֶךָ, כִּי אֵל גּוֹאֵל חָזָק אָתָּה. בָּרוּךְ אַתָּה יְהֹוָה, גּוֹאֵל יִשְׂרָאֵל."],
-    ["רפואה", "רְפָאֵנוּ יְהֹוָה וְנֵרָפֵא, הוֹשִׁיעֵנוּ וְנִוָּשֵׁעָה, כִּי תְהִלָּתֵנוּ אָתָּה, וְהַעֲלֵה רְפוּאָה שְׁלֵמָה לְכָל מַכּוֹתֵינוּ. בָּרוּךְ אַתָּה יְהֹוָה, רוֹפֵא חוֹלֵי עַמּוֹ יִשְׂרָאֵל."],
-    ["ברכת השנים",
-      "בָּרֵךְ עָלֵינוּ יְהֹוָה אֱלֹהֵינוּ אֶת הַשָּׁנָה הַזֹּאת וְאֶת כָּל מִינֵי תְבוּאָתָהּ לְטוֹבָה, וְתֵן בְּרָכָה עַל פְּנֵי הָאֲדָמָה, וְשַׂבְּעֵנוּ מִטּוּבָךְ. בָּרוּךְ אַתָּה יְהֹוָה, מְבָרֵךְ הַשָּׁנִים.",
-      "בָּרְכֵנוּ יְהֹוָה אֱלֹהֵינוּ בְּכָל מַעֲשֵׂה יָדֵינוּ, וּבָרֵךְ שְׁנָתֵנוּ בְּטַלְלֵי רָצוֹן בְּרָכָה וּנְדָבָה, וּתְהִי אַחֲרִיתָהּ חַיִּים וְשָׂבָע וְשָׁלוֹם כַּשָּׁנִים הַטּוֹבוֹת לִבְרָכָה, כִּי אֵל טוֹב וּמֵטִיב אַתָּה וּמְבָרֵךְ הַשָּׁנִים. בָּרוּךְ אַתָּה יְהֹוָה, מְבָרֵךְ הַשָּׁנִים."
-    ],
-    ["קיבוץ גליות", "תְּקַע בְּשׁוֹפָר גָּדוֹל לְחֵרוּתֵנוּ, וְשָׂא נֵס לְקַבֵּץ גָּלֻיּוֹתֵינוּ, וְקַבְּצֵנוּ יַחַד מֵאַרְבַּע כַּנְפוֹת הָאָרֶץ. בָּרוּךְ אַתָּה יְהֹוָה, מְקַבֵּץ נִדְחֵי עַמּוֹ יִשְׂרָאֵל."],
-    ["דין", "הָשִׁיבָה שׁוֹפְטֵינוּ כְּבָרִאשׁוֹנָה וְיוֹעֲצֵינוּ כְּבַתְּחִלָּה, וּמְלוֹךְ עָלֵינוּ אַתָּה יְהֹוָה לְבַדְּךָ בְּחֶסֶד וּבְרַחֲמִים, וְצַדְּקֵנוּ בַּמִּשְׁפָּט. בָּרוּךְ אַתָּה יְהֹוָה, מֶלֶךְ אוֹהֵב צְדָקָה וּמִשְׁפָּט."],
-    ["ברכת המינים", "וְלַמַּלְשִׁינִים אַל תְּהִי תִקְוָה, וְכָל הָרִשְׁעָה כְּרֶגַע תֹּאבֵד, וְכָל אוֹיְבֶיךָ מְהֵרָה יִכָּרֵתוּ, וְהַזֵּדִים מְהֵרָה תְעַקֵּר וּתְשַׁבֵּר וּתְמַגֵּר וְתַכְנִיעַ בִּמְהֵרָה בְיָמֵינוּ. בָּרוּךְ אַתָּה יְהֹוָה, שׁוֹבֵר אֹיְבִים וּמַכְנִיעַ זֵדִים."],
-    ["צדיקים", "עַל הַצַּדִּיקִים וְעַל הַחֲסִידִים וְעַל זִקְנֵי עַמְּךָ בֵּית יִשְׂרָאֵל, יֶהֱמוּ נָא רַחֲמֶיךָ יְהֹוָה אֱלֹהֵינוּ, וְתֵן שָׂכָר טוֹב לְכָל הַבּוֹטְחִים בְּשִׁמְךָ בֶּאֱמֶת, וְשִׂים חֶלְקֵנוּ עִמָּהֶם. בָּרוּךְ אַתָּה יְהֹוָה, מִשְׁעָן וּמִבְטָח לַצַּדִּיקִים."],
-    ["בנין ירושלים", "וְלִירוּשָׁלַיִם עִירְךָ בְּרַחֲמִים תָּשׁוּב, וְתִשְׁכּוֹן בְּתוֹכָהּ כַּאֲשֶׁר דִּבַּרְתָּ, וּבְנֵה אוֹתָהּ בְּקָרוֹב בְּיָמֵינוּ בִּנְיַן עוֹלָם. בָּרוּךְ אַתָּה יְהֹוָה, בּוֹנֵה יְרוּשָׁלָיִם."],
-    ["מלכות בית דוד", "אֶת צֶמַח דָּוִד עַבְדְּךָ מְהֵרָה תַצְמִיחַ, וְקַרְנוֹ תָּרוּם בִּישׁוּעָתֶךָ, כִּי לִישׁוּעָתְךָ קִוִּינוּ כָּל הַיּוֹם. בָּרוּךְ אַתָּה יְהֹוָה, מַצְמִיחַ קֶרֶן יְשׁוּעָה."],
-    ["קבלת תפילה", "שְׁמַע קוֹלֵנוּ יְהֹוָה אֱלֹהֵינוּ, חוּס וְרַחֵם עָלֵינוּ, וְקַבֵּל בְּרַחֲמִים וּבְרָצוֹן אֶת תְּפִלָּתֵנוּ, כִּי אֵל שׁוֹמֵעַ תְּפִלּוֹת וְתַחֲנוּנִים אָתָּה. בָּרוּךְ אַתָּה יְהֹוָה, שׁוֹמֵעַ תְּפִלָּה."],
-    ["עבודה", "רְצֵה יְהֹוָה אֱלֹהֵינוּ בְּעַמְּךָ יִשְׂרָאֵל וּבִתְפִלָּתָם, וְהָשֵׁב אֶת הָעֲבוֹדָה לִדְבִיר בֵּיתֶךָ. וְתֶחֱזֶינָה עֵינֵינוּ בְּשׁוּבְךָ לְצִיּוֹן בְּרַחֲמִים. בָּרוּךְ אַתָּה יְהֹוָה, הַמַּחֲזִיר שְׁכִינָתוֹ לְצִיּוֹן."],
-    ["הודאה", "מוֹדִים אֲנַחְנוּ לָךְ שָׁאַתָּה הוּא יְהֹוָה אֱלֹהֵינוּ וֵאלֹהֵי אֲבוֹתֵינוּ לְעוֹלָם וָעֶד, צוּר חַיֵּינוּ מָגֵן יִשְׁעֵנוּ אַתָּה הוּא לְדוֹר וָדוֹר. נוֹדֶה לְּךָ וּנְסַפֵּר תְּהִלָּתֶךָ עַל חַיֵּינוּ הַמְּסוּרִים בְּיָדֶךָ, וְעַל נִשְׁמוֹתֵינוּ הַפְּקוּדוֹת לָךְ, וְעַל נִסֶּיךָ שֶׁבְּכָל יוֹם עִמָּנוּ, וְעַל נִפְלְאוֹתֶיךָ וְטוֹבוֹתֶיךָ שֶׁבְּכָל עֵת, עֶרֶב וָבֹקֶר וְצָהֳרָיִם. וְעַל כֻּלָּם יִתְבָּרַךְ וְיִתְרוֹמַם שִׁמְךָ מַלְכֵּנוּ תָּמִיד לְעוֹלָם וָעֶד. בָּרוּךְ אַתָּה יְהֹוָה, הַטּוֹב שִׁמְךָ וּלְךָ נָאֶה לְהוֹדוֹת."],
-    ["שלום",
-      "שִׂים שָׁלוֹם טוֹבָה וּבְרָכָה, חֵן וָחֶסֶד וְרַחֲמִים, עָלֵינוּ וְעַל כָּל יִשְׂרָאֵל עַמֶּךָ. בָּרְכֵנוּ אָבִינוּ כֻּלָּנוּ כְּאֶחָד בְּאוֹר פָּנֶיךָ, כִּי בְאוֹר פָּנֶיךָ נָתַתָּ לָּנוּ יְהֹוָה אֱלֹהֵינוּ תּוֹרַת חַיִּים וְאַהֲבַת חֶסֶד, וּצְדָקָה וּבְרָכָה וְרַחֲמִים וְחַיִּים וְשָׁלוֹם. בָּרוּךְ אַתָּה יְהֹוָה, הַמְבָרֵךְ אֶת עַמּוֹ יִשְׂרָאֵל בַּשָּׁלוֹם.",
-      "שָׁלוֹם רָב עַל יִשְׂרָאֵל עַמְּךָ תָּשִׂים לְעוֹלָם, כִּי אַתָּה הוּא מֶלֶךְ אָדוֹן לְכָל הַשָּׁלוֹם, וְטוֹב בְּעֵינֶיךָ לְבָרֵךְ אֶת עַמְּךָ יִשְׂרָאֵל בְּכָל עֵת וּבְכָל שָׁעָה בִּשְׁלוֹמֶךָ. בָּרוּךְ אַתָּה יְהֹוָה, הַמְבָרֵךְ אֶת עַמּוֹ יִשְׂרָאֵל בַּשָּׁלוֹם."
-    ],
-    ["בסיום", "אֱלֹהַי, נְצוֹר לְשׁוֹנִי מֵרָע וּשְׂפָתַי מִדַּבֵּר מִרְמָה. יִהְיוּ לְרָצוֹן אִמְרֵי פִי וְהֶגְיוֹן לִבִּי לְפָנֶיךָ, יְהֹוָה צוּרִי וְגוֹאֲלִי."]
-  ];
+  // state.nusach values -> keys in window.PRAYERS.byNusach
+  var PRAYER_SET_BY_NUSACH = {
+    ashkenazi: "ashkenazi",
+    sephardi: "sephardi",
+    moroccan: "mizrachi",
+    mizrachi: "mizrachi"
+  };
 
-  function isAshkenazi() {
-    return state.nusach === "ashkenazi" || !state.nusach;
+  var SECTION_ICON =
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v17"/><path d="M12 5c-1 3-4 4-6 3.5 0 5.5 1 9.5 6 13"/><path d="M12 5c1 3 4 4 6 3.5 0 5.5-1 9.5-6 13"/></svg>';
+
+  var prayerSectionsEl = document.getElementById("prayer-sections");
+  var prayerJumpMenuEl = document.getElementById("prayer-jump-menu");
+  var siddurCreditEl = document.getElementById("siddur-credit");
+  var siddurNoticeNusachEl = document.getElementById("siddur-notice-nusach");
+
+  function prayerSections() {
+    if (!window.PRAYERS || !window.PRAYERS.byNusach) return [];
+    var key = PRAYER_SET_BY_NUSACH[state.nusach] || "ashkenazi";
+    return window.PRAYERS.byNusach[key] || [];
   }
 
-  function buildAmidahHtml() {
-    var useAshkenazi = isAshkenazi();
-    return AMIDAH_ITEMS.map(function (item) {
-      var text = (!useAshkenazi && item[2]) ? item[2] : item[1];
-      return '<div class="amidah-item"><p class="amidah-name">' + item[0] + '</p><p class="amidah-text">' + text + '</p></div>';
+  function escapeHtml(s) {
+    return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+
+  function refToUrl(ref) {
+    return SEFARIA_BASE + encodeURI(String(ref || "").replace(/ /g, "_"));
+  }
+
+  function firstSpokenLine(section) {
+    for (var i = 0; i < section.blocks.length; i++) {
+      var lines = section.blocks[i].lines;
+      for (var j = 0; j < lines.length; j++) {
+        if (!lines[j].n) return lines[j].t;
+      }
+    }
+    return "";
+  }
+
+  function buildSectionHtml(section) {
+    var preview = firstSpokenLine(section);
+    if (preview.length > 55) preview = preview.slice(0, 55).replace(/\S*$/, "").trim() + "...";
+
+    var body = section.blocks.map(function (block) {
+      var inner = block.lines.map(function (l) {
+        return l.n
+          ? '<p class="prayer-line-note">' + escapeHtml(l.t) + "</p>"
+          : '<p class="prayer-line-body">' + escapeHtml(l.t) + "</p>";
+      }).join("");
+      var name = section.blocks.length > 1
+        ? '<p class="block-name">' + escapeHtml(block.name) + "</p>"
+        : "";
+      return '<div class="prayer-block">' + name + inner + "</div>";
     }).join("");
+
+    return '<div class="card prayer-card expandable" id="section-' + section.id + '">' +
+      '<div class="prayer-card-head">' +
+        '<span class="book-icon">' + SECTION_ICON + "</span>" +
+        '<span class="prayer-card-title">' + escapeHtml(section.title) + "</span>" +
+        '<span class="prayer-toggle">הצג הכל ⌄</span>' +
+      "</div>" +
+      '<p class="prayer-line-main">' + escapeHtml(preview) + "</p>" +
+      '<div class="prayer-full hidden">' + body + "</div>" +
+      '<a class="siddur-link" href="' + refToUrl(section.ref) + '" target="_blank" rel="noopener">פתיחה בסידור המלא ›</a>' +
+      "</div>";
   }
 
-  var amidahFullEl = document.getElementById("amidah-full");
-
-  function renderAmidahCard() {
-    if (amidahFullEl) amidahFullEl.innerHTML = buildAmidahHtml();
+  function renderJumpMenu(sections) {
+    var html = '<button class="prayer-jump-item" data-target="section-start">להתחלה</button>';
+    html += sections.map(function (s) {
+      return '<button class="prayer-jump-item" data-target="section-' + s.id + '">' +
+        escapeHtml(s.title) + "</button>";
+    }).join("");
+    prayerJumpMenuEl.innerHTML = html;
   }
 
-  var shemaFullEl = document.getElementById("shema-full-2");
-  if (shemaFullEl) shemaFullEl.innerHTML = SHEMA_FULL_HTML;
+  function renderSiddurCredit() {
+    var src = (window.PRAYERS && window.PRAYERS.source) || null;
+    if (siddurCreditEl) {
+      siddurCreditEl.textContent = src
+        ? "טקסט התפילה: " + src.name + " (" + src.license + ") דרך ספריא"
+        : "";
+    }
+    if (siddurNoticeNusachEl) {
+      siddurNoticeNusachEl.textContent = "נוסח " + (NUSACH_LABELS[state.nusach] || "אשכנזי");
+    }
+  }
+
+  function renderPrayerSections() {
+    if (!prayerSectionsEl) return;
+    var sections = prayerSections();
+    prayerSectionsEl.innerHTML = sections.map(buildSectionHtml).join("");
+    renderJumpMenu(sections);
+    renderSiddurCredit();
+  }
+
 
   // ---------- Nusach-aware tefillin blessing ----------
   var BLESSING_ASHKENAZI_HTML =
@@ -289,16 +315,19 @@
     blessingBodyEl.innerHTML = BLESSING_HTML_BY_NUSACH[state.nusach] || BLESSING_ASHKENAZI_HTML;
   }
 
-  document.querySelectorAll(".expandable .prayer-card-head").forEach(function (head) {
-    head.addEventListener("click", function () {
-      var card = head.closest(".prayer-card");
-      var full = card.querySelector(".prayer-full");
-      var toggle = head.querySelector(".prayer-toggle");
-      var isHidden = full.classList.contains("hidden");
-      full.classList.toggle("hidden", !isHidden);
-      toggle.textContent = isHidden ? "הסתר ⌃" : "הצג הכל ⌄";
-      if (isHidden) card.scrollIntoView({ behavior: "smooth", block: "start" });
-    });
+  // Delegated: the prayer cards are rebuilt on every visit to the prayer screen,
+  // so per-element listeners would be lost on re-render.
+  screens.prayer.addEventListener("click", function (e) {
+    var head = e.target.closest(".expandable .prayer-card-head");
+    if (!head) return;
+    var card = head.closest(".prayer-card");
+    var full = card.querySelector(".prayer-full");
+    var toggle = head.querySelector(".prayer-toggle");
+    if (!full || !toggle) return;
+    var isHidden = full.classList.contains("hidden");
+    full.classList.toggle("hidden", !isHidden);
+    toggle.textContent = isHidden ? "הסתר ⌃" : "הצג הכל ⌄";
+    if (isHidden) card.scrollIntoView({ behavior: "smooth", block: "start" });
   });
 
   // ---------- Toast ----------
@@ -582,12 +611,13 @@
     prayerJumpMenu.classList.toggle("hidden");
   });
 
-  document.querySelectorAll(".prayer-jump-item").forEach(function (btn) {
-    btn.addEventListener("click", function () {
-      var target = document.getElementById(btn.dataset.target);
-      prayerJumpMenu.classList.add("hidden");
-      if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
-    });
+  // Delegated: jump items are rebuilt per nusach on each prayer-screen render.
+  prayerJumpMenu.addEventListener("click", function (e) {
+    var btn = e.target.closest(".prayer-jump-item");
+    if (!btn) return;
+    var target = document.getElementById(btn.dataset.target);
+    prayerJumpMenu.classList.add("hidden");
+    if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
   });
 
   document.addEventListener("click", function (e) {

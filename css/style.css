@@ -687,25 +687,21 @@ body {
 
 #screen-prayer.style-font-styled .prayer-line-main,
 #screen-prayer.style-font-styled .prayer-line-body,
-#screen-prayer.style-font-styled .blessing-text,
-#screen-prayer.style-font-styled .shema-para {
+#screen-prayer.style-font-styled .blessing-text {
   font-family: "Frank Ruhl Libre", serif;
 }
 
 #screen-prayer.style-color-navy .prayer-line-main,
 #screen-prayer.style-color-navy .prayer-line-body,
-#screen-prayer.style-color-navy .blessing-text,
-#screen-prayer.style-color-navy .shema-para { color: #154a78; }
+#screen-prayer.style-color-navy .blessing-text { color: #154a78; }
 
 #screen-prayer.style-color-maroon .prayer-line-main,
 #screen-prayer.style-color-maroon .prayer-line-body,
-#screen-prayer.style-color-maroon .blessing-text,
-#screen-prayer.style-color-maroon .shema-para { color: #7a1f2b; }
+#screen-prayer.style-color-maroon .blessing-text { color: #7a1f2b; }
 
 #screen-prayer.style-color-green .prayer-line-main,
 #screen-prayer.style-color-green .prayer-line-body,
-#screen-prayer.style-color-green .blessing-text,
-#screen-prayer.style-color-green .shema-para { color: #1f6b3a; }
+#screen-prayer.style-color-green .blessing-text { color: #1f6b3a; }
 
 body.dark .font-option { border-color: #2a3646; }
 
@@ -827,40 +823,58 @@ body.dark .font-option { border-color: #2a3646; }
 
 .prayer-jump-item:hover, .prayer-jump-item:active { background: var(--ink-light); }
 
-.motzei-shabbat-header { color: var(--text-sub); }
-
-.motzei-shabbat-note {
-  margin: 0 0 16px;
-  font-size: 12px;
-  font-style: italic;
-}
-
-.prayer-full .amidah-item {
+/* ---------- Siddur notice + full-text links ---------- */
+.siddur-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--text-sub);
+  border: 1px solid var(--blue-light);
   margin-bottom: 14px;
 }
 
-.prayer-full .amidah-item:last-child { margin-bottom: 0; }
-
-.amidah-name {
+.siddur-notice svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
   color: var(--blue);
-  font-size: 11px;
+  margin-top: 1px;
+}
+
+.siddur-notice strong { color: var(--text); }
+
+.siddur-link {
+  display: inline-block;
+  margin-top: 12px;
+  color: var(--blue);
+  font-size: 12.5px;
   font-weight: 700;
-  margin: 0 0 4px;
+  text-decoration: none;
 }
 
-.amidah-text {
-  font-size: 14px;
-  line-height: 1.8;
-  margin: 0;
+.siddur-link:hover, .siddur-link:active { text-decoration: underline; }
+
+.prayer-block { margin-bottom: 16px; }
+.prayer-block:last-child { margin-bottom: 0; }
+
+.block-name {
+  color: var(--blue);
+  font-size: 11.5px;
+  font-weight: 700;
+  margin: 0 0 5px;
 }
 
-.shema-para {
-  font-size: 14px;
-  line-height: 1.85;
-  margin: 0 0 14px;
+.siddur-credit {
+  margin: 14px 0 4px;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--text-sub);
+  text-align: center;
 }
 
-.shema-para:last-child { margin-bottom: 0; }
+
 
 .blessing-card { border: 1px solid var(--blue-light); }
 
