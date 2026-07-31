@@ -137,7 +137,8 @@
     shop: document.getElementById("screen-shop"),
     textstyle: document.getElementById("screen-textstyle"),
     prayer: document.getElementById("screen-prayer"),
-    "photo-upload": document.getElementById("screen-photo-upload")
+    "photo-upload": document.getElementById("screen-photo-upload"),
+    achievements: document.getElementById("screen-achievements")
   };
 
   var navBtns = document.querySelectorAll(".bottom-nav .nav-btn");
@@ -150,10 +151,11 @@
     navBtns.forEach(function (btn) {
       btn.classList.toggle("active", btn.dataset.nav === name);
     });
-    bottomNav.classList.toggle("hidden", name === "prayer" || name === "onboarding" || name === "nusach" || name === "shop" || name === "textstyle" || name === "photo-upload");
+    bottomNav.classList.toggle("hidden", name === "prayer" || name === "onboarding" || name === "nusach" || name === "shop" || name === "textstyle" || name === "photo-upload" || name === "achievements");
     document.getElementById("coin-badge").classList.toggle("hidden", name === "onboarding");
     document.getElementById("lay-fab").classList.toggle("hidden",
-      name === "home" || name === "onboarding" || name === "nusach" || name === "prayer" || name === "textstyle" || name === "photo-upload");
+      name === "home" || name === "onboarding" || name === "nusach" || name === "prayer" || name === "textstyle" || name === "photo-upload" || name === "achievements");
+    if (name === "achievements") renderAchievements();
     if (name === "stats") renderStats();
     if (name === "settings") renderSettings();
     if (name === "reminders") renderReminders();
@@ -1541,6 +1543,43 @@
 
   document.getElementById("photo-btn-home").addEventListener("click", function () {
     showScreen("photo-upload");
+  });
+
+  // ---------- Achievements ----------
+  var ACHIEVEMENTS = [
+    { id: "first-lay", title: "הנחה ראשונה", desc: "הנח תפילין בפעם הראשונה", icon: "🎯", reward: "10 מטבעות", check: function () { return Object.keys(state.log).length > 0; } },
+    { id: "week-7", title: "שבוע שלם", desc: "הנח תפילין 7 ימים ברצף", icon: "📅", reward: "50 מטבעות", check: function () { return state.lastStreakSeen >= 7; } },
+    { id: "month-30", title: "חודש מלא", desc: "הנח תפילין 30 ימים ברצף", icon: "🏆", reward: "200 מטבעות", check: function () { return state.lastStreakSeen >= 30; } },
+    { id: "coins-100", title: "קוניסטור", desc: "צבור 100 מטבעות", icon: "🪙", reward: "50 מטבעות", check: function () { return state.coins >= 100; } },
+    { id: "tier-silver", title: "כסף", desc: "הגע לרמת כסף", icon: "⭐", reward: "50 מטבעות", check: function () { return state.purchasedTierIndex >= 1; } },
+    { id: "tier-gold", title: "זהב", desc: "הגע לרמת זהב", icon: "👑", reward: "100 מטבעות", check: function () { return state.purchasedTierIndex >= 2; } },
+    { id: "photos-5", title: "צלם 5", desc: "העלה 5 תמונות של הנחה", icon: "📸", reward: "75 מטבעות", check: function () { return (state.tefillinPhotos && Object.keys(state.tefillinPhotos).length >= 5) || false; } }
+  ];
+
+  function renderAchievements() {
+    var listEl = document.getElementById("achievements-list");
+    var streakEl = document.getElementById("achievements-streak-count");
+
+    streakEl.textContent = state.lastStreakSeen;
+    listEl.innerHTML = "";
+
+    ACHIEVEMENTS.forEach(function (ach) {
+      var isUnlocked = ach.check();
+      var div = document.createElement("div");
+      div.className = "achievement-item" + (isUnlocked ? "" : " locked");
+      div.innerHTML =
+        '<div class="achievement-icon">' + ach.icon + '</div>' +
+        '<div class="achievement-text">' +
+          '<div class="achievement-title">' + ach.title + '</div>' +
+          '<div class="achievement-desc">' + ach.desc + '</div>' +
+        '</div>' +
+        '<div class="achievement-reward">' + ach.reward + '</div>';
+      listEl.appendChild(div);
+    });
+  }
+
+  document.getElementById("achievements-close").addEventListener("click", function () {
+    showScreen("home");
   });
 
   // ---------- Init ----------

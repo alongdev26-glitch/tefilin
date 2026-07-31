@@ -267,6 +267,26 @@
     </div>
   </section>
 
+  <!-- ===== ACHIEVEMENTS ===== -->
+  <section class="screen hidden" id="screen-achievements">
+    <header class="topbar">
+      <button class="icon-btn" id="achievements-close" aria-label="חזרה"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      <h1 class="topbar-title">הישגים</h1>
+      <span class="icon-btn" style="visibility:hidden"></span>
+    </header>
+    <div class="content achievements-content">
+      <div class="achievements-header">
+        <div class="achievements-card">
+          <div class="achievements-streak" id="achievements-streak-count">0</div>
+          <div class="achievements-label">ימים ברצף</div>
+        </div>
+      </div>
+
+      <h3 class="section-title standalone">הישגים זמינים</h3>
+      <div class="achievements-list" id="achievements-list"></div>
+    </div>
+  </section>
+
   <!-- ===== LAY TEFILLIN (PRAYER FLOW) ===== -->
   <section class="screen hidden" id="screen-prayer">
     <header class="topbar">
@@ -501,6 +521,11 @@
           <span class="chevron">‹</span>
           <div class="settings-row-text">תזכורות וזמנים</div>
           <span class="settings-icon" id="settings-icon-reminders"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a6 6 0 0 1 12 0c0 4 1.5 5.5 2 6H4c.5-.5 2-2 2-6Z"/><path d="M9.5 19a2.5 2.5 0 0 0 5 0"/></svg></span>
+        </div>
+        <div class="settings-row" data-nav="achievements">
+          <span class="chevron">‹</span>
+          <div class="settings-row-text">הישגים</div>
+          <span class="settings-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="5.5"/><path d="M8.7 14 7 21l5-2.7L17 21l-1.7-7"/></svg></span>
         </div>
         <div class="settings-row" data-nav="none">
           <span class="chevron">‹</span>
