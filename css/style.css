@@ -1587,3 +1587,133 @@ body.dark .freq-btn { border-color: #2a3646; }
   color: var(--text);
   cursor: pointer;
 }
+
+/* ---------- Photo Upload ========== */
+.photo-upload-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.photo-upload-intro {
+  text-align: center;
+  color: var(--text-sub);
+}
+
+.photo-upload-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+  background: var(--ink-light);
+  border: 2px dashed var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+}
+
+.photo-select-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  color: var(--text-sub);
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.photo-select-btn svg {
+  width: 40px;
+  height: 40px;
+  color: var(--blue);
+}
+
+.photo-select-btn:active {
+  opacity: 0.7;
+}
+
+.photo-preview-wrap {
+  display: flex;
+  justify-content: center;
+}
+
+.photo-preview-wrap.hidden { display: none; }
+
+.photo-preview {
+  max-width: 100%;
+  max-height: 300px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.photo-upload-btn {
+  display: none;
+}
+
+.photo-upload-btn:not(.hidden) {
+  display: flex;
+}
+
+.photo-result-box {
+  display: none;
+  padding: 16px;
+  background: var(--ink-light);
+  border-radius: var(--radius);
+  text-align: center;
+}
+
+.photo-result-box:not(.hidden) {
+  display: block;
+}
+
+.photo-result-message {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.photo-info-box {
+  margin-top: 8px;
+}
+
+.photo-tips {
+  margin: 8px 0;
+  padding: 0 0 0 20px;
+  font-size: 13px;
+  color: var(--text-sub);
+  line-height: 1.6;
+}
+
+.photo-tips li {
+  margin: 4px 0;
+}
+
+.photo-btn-home {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--ink-light);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.photo-btn-home:active {
+  background: var(--surface-2);
+}
+
+.photo-btn-home svg {
+  width: 18px;
+  height: 18px;
+  color: var(--blue);
+}
+
+.hidden { display: none !important; }

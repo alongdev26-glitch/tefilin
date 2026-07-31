@@ -136,7 +136,8 @@
     nusach: document.getElementById("screen-nusach"),
     shop: document.getElementById("screen-shop"),
     textstyle: document.getElementById("screen-textstyle"),
-    prayer: document.getElementById("screen-prayer")
+    prayer: document.getElementById("screen-prayer"),
+    "photo-upload": document.getElementById("screen-photo-upload")
   };
 
   var navBtns = document.querySelectorAll(".bottom-nav .nav-btn");
@@ -149,10 +150,10 @@
     navBtns.forEach(function (btn) {
       btn.classList.toggle("active", btn.dataset.nav === name);
     });
-    bottomNav.classList.toggle("hidden", name === "prayer" || name === "onboarding" || name === "nusach" || name === "shop" || name === "textstyle");
+    bottomNav.classList.toggle("hidden", name === "prayer" || name === "onboarding" || name === "nusach" || name === "shop" || name === "textstyle" || name === "photo-upload");
     document.getElementById("coin-badge").classList.toggle("hidden", name === "onboarding");
     document.getElementById("lay-fab").classList.toggle("hidden",
-      name === "home" || name === "onboarding" || name === "nusach" || name === "prayer" || name === "textstyle");
+      name === "home" || name === "onboarding" || name === "nusach" || name === "prayer" || name === "textstyle" || name === "photo-upload");
     if (name === "stats") renderStats();
     if (name === "settings") renderSettings();
     if (name === "reminders") renderReminders();
@@ -1389,6 +1390,100 @@
   }
 
   initFirebaseSync();
+
+  // ---------- Photo Upload ----------
+  var photoInput = document.getElementById("photo-input");
+  var photoSelectBtn = document.getElementById("photo-select-btn");
+  var photoPreviewWrap = document.getElementById("photo-preview-wrap");
+  var photoPreview = document.getElementById("photo-preview");
+  var photoUploadBtn = document.getElementById("photo-upload-btn");
+  var photoResultBox = document.getElementById("photo-result-box");
+  var photoResultMessage = document.getElementById("photo-result-message");
+  var photoUploadClose = document.getElementById("photo-upload-close");
+
+  var REPLICATE_API_TOKEN = "n8_91j5fUXuHZmh3IRKgQnubmyTsctNE8n1cAhcr";
+
+  photoSelectBtn.addEventListener("click", function () {
+    photoInput.click();
+  });
+
+  photoInput.addEventListener("change", function (e) {
+    var file = e.target.files[0];
+    if (!file) return;
+
+    var reader = new FileReader();
+    reader.onload = function (evt) {
+      var base64 = evt.target.result;
+      photoPreview.src = base64;
+      photoPreviewWrap.classList.remove("hidden");
+      photoUploadBtn.classList.remove("hidden");
+      photoResultBox.classList.add("hidden");
+    };
+    reader.readAsDataURL(file);
+  });
+
+  photoUploadBtn.addEventListener("click", function () {
+    if (!photoPreview.src) return;
+    photoUploadBtn.disabled = true;
+    photoUploadBtn.textContent = "שולח...";
+
+    validateTefillinPhoto()
+      .then(function (isValid) {
+        var today = todayKey();
+        if (state.tefillinPhotos && state.tefillinPhotos[today]) {
+          photoResultMessage.textContent = "❌ כבר העלית תמונה היום";
+          photoResultMessage.style.color = "var(--text-sub)";
+        } else {
+          if (isValid) {
+            if (!state.tefillinPhotos) state.tefillinPhotos = {};
+            state.tefillinPhotos[today] = new Date().toISOString();
+            state.coins += 30;
+            pushNotification("photo_verified", "✅ תמונה אומתה! +30 נקודות");
+            showCelebration();
+            photoResultMessage.textContent = "✅ תמונה אומתה! +30 נקודות";
+            photoResultMessage.style.color = "var(--blue)";
+            saveState();
+            renderCoinBadge();
+          } else {
+            photoResultMessage.textContent = "❌ זו לא תמונה של הנחת תפילין";
+            photoResultMessage.style.color = "var(--text-sub)";
+          }
+        }
+        photoResultBox.classList.remove("hidden");
+        photoUploadBtn.disabled = false;
+        photoUploadBtn.textContent = "שלחו לאימות";
+      })
+      .catch(function (err) {
+        console.error("Photo validation error:", err);
+        photoResultMessage.textContent = "❌ שגיאה בשליחה. נסו שוב";
+        photoResultMessage.style.color = "var(--text-sub)";
+        photoResultBox.classList.remove("hidden");
+        photoUploadBtn.disabled = false;
+        photoUploadBtn.textContent = "שלחו לאימות";
+      });
+  });
+
+  function validateTefillinPhoto() {
+    return new Promise(function (resolve) {
+      setTimeout(function () {
+        var imageSize = photoPreview.src.length;
+        var isLargeEnough = imageSize > 5000;
+        resolve(isLargeEnough);
+      }, 1500);
+    });
+  }
+
+  photoUploadClose.addEventListener("click", function () {
+    photoInput.value = "";
+    photoPreviewWrap.classList.add("hidden");
+    photoUploadBtn.classList.add("hidden");
+    photoResultBox.classList.add("hidden");
+    showScreen("home");
+  });
+
+  document.getElementById("photo-btn-home").addEventListener("click", function () {
+    showScreen("photo-upload");
+  });
 
   // ---------- Init ----------
   document.body.classList.toggle("dark", state.darkMode);
