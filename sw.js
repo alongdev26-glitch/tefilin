@@ -1,4 +1,4 @@
-var CACHE_NAME = "tefillin-cache-v37";
+var CACHE_NAME = "tefillin-cache-v40";
 var ASSETS = [
   "./",
   "./index.html",
