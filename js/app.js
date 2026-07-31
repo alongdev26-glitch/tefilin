@@ -1465,12 +1465,70 @@
 
   function validateTefillinPhoto() {
     return new Promise(function (resolve) {
-      setTimeout(function () {
-        var imageSize = photoPreview.src.length;
-        var isLargeEnough = imageSize > 5000;
-        resolve(isLargeEnough);
-      }, 1500);
+      var base64Data = photoPreview.src;
+
+      fetch("https://api.replicate.com/v1/predictions", {
+        method: "POST",
+        headers: {
+          "Authorization": "Token " + REPLICATE_API_TOKEN,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          version: "40e046d91c8715cbe532eda2d4bfe89f9c6e16da0cf437f53de47e81b124c016",
+          input: {
+            image: base64Data,
+            text: "tefillin, phylacteries, prayer, jewish"
+          }
+        })
+      })
+      .then(function (response) {
+        if (!response.ok) throw new Error("API error");
+        return response.json();
+      })
+      .then(function (data) {
+        var predictionId = data.id;
+        pollPredictionStatus(predictionId, resolve);
+      })
+      .catch(function (err) {
+        console.error("Replicate error:", err);
+        resolve(false);
+      });
     });
+  }
+
+  function pollPredictionStatus(predictionId, resolve) {
+    var attempts = 0;
+    var maxAttempts = 60;
+
+    function poll() {
+      if (attempts >= maxAttempts) {
+        resolve(false);
+        return;
+      }
+
+      fetch("https://api.replicate.com/v1/predictions/" + predictionId, {
+        headers: { "Authorization": "Token " + REPLICATE_API_TOKEN }
+      })
+      .then(function (response) { return response.json(); })
+      .then(function (data) {
+        if (data.status === "succeeded") {
+          var output = data.output;
+          var confidence = output && output.confidence !== undefined ? output.confidence : 0;
+          resolve(confidence > 0.3);
+        } else if (data.status === "failed") {
+          resolve(false);
+        } else {
+          attempts++;
+          setTimeout(poll, 500);
+        }
+      })
+      .catch(function () {
+        attempts++;
+        setTimeout(poll, 500);
+      });
+    }
+
+    poll();
   }
 
   photoUploadClose.addEventListener("click", function () {
