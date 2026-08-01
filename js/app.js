@@ -145,16 +145,19 @@
   var bottomNav = document.querySelector(".bottom-nav");
 
   function showScreen(name) {
+    // Map "photos" tab to "photo-upload" screen
+    var screenKey = name === "photos" ? "photo-upload" : name;
+
     Object.keys(screens).forEach(function (key) {
-      screens[key].classList.toggle("hidden", key !== name);
+      screens[key].classList.toggle("hidden", key !== screenKey);
     });
     navBtns.forEach(function (btn) {
       btn.classList.toggle("active", btn.dataset.nav === name);
     });
-    bottomNav.classList.toggle("hidden", name === "prayer" || name === "onboarding" || name === "nusach" || name === "shop" || name === "textstyle" || name === "photo-upload" || name === "achievements");
+    bottomNav.classList.toggle("hidden", name === "prayer" || name === "onboarding" || name === "nusach" || name === "shop" || name === "textstyle" || name === "photos" || name === "achievements");
     document.getElementById("coin-badge").classList.toggle("hidden", name === "onboarding");
     document.getElementById("lay-fab").classList.toggle("hidden",
-      name === "home" || name === "onboarding" || name === "nusach" || name === "prayer" || name === "textstyle" || name === "photo-upload" || name === "achievements");
+      name === "home" || name === "onboarding" || name === "nusach" || name === "prayer" || name === "textstyle" || name === "photos" || name === "achievements");
     if (name === "achievements") renderAchievements();
     if (name === "stats") renderStats();
     if (name === "settings") renderSettings();
