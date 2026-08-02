@@ -22,6 +22,7 @@
     lastStreakSeen: 0,
     weeklyMilestonesAwarded: 0,
     textStyle: { font: "default", color: "navy" },
+    tefillinPhotos: {}, // { "YYYY-MM-DD": ISO timestamp } - track uploaded photos per day
     notifications: [] // { id, message, createdAt, read }
   };
 
@@ -1269,9 +1270,15 @@
 
   reminderTimeInput.addEventListener("change", function () {
     if (!reminderTimeInput.value) return;
+    // Validate reminder time is before deadline
+    if (reminderTimeInput.value >= state.commitEnd) {
+      showToast("❌ שעת התזכורת חייבת להיות לפני המועד היעד (" + state.commitEnd + ")");
+      reminderTimeInput.value = state.reminderTime;
+      return;
+    }
     state.reminderTime = reminderTimeInput.value;
     saveState();
-    showToast("שעת התזכורת עודכנה ל-" + state.reminderTime);
+    showToast("✅ שעת התזכורת עודכנה ל-" + state.reminderTime);
   });
 
   useSunsetToggle.addEventListener("change", function () {
@@ -1294,6 +1301,8 @@
         function () {
           showToast("לא ניתן לגשת למיקום - בדוק הרשאות מיקום בדפדפן");
           useSunsetToggle.checked = false;
+          state.useSunset = false;
+          saveState();
         }
       );
     } else {
@@ -1443,7 +1452,7 @@
             if (!state.tefillinPhotos) state.tefillinPhotos = {};
             state.tefillinPhotos[today] = new Date().toISOString();
             state.coins += 30;
-            pushNotification("photo_verified", "✅ תמונה אומתה! +30 נקודות");
+            pushNotification("✅ תמונה אומתה! +30 נקודות");
             showCelebration();
             photoResultMessage.textContent = "✅ תמונה אומתה! +30 נקודות";
             photoResultMessage.style.color = "var(--blue)";
@@ -1542,10 +1551,6 @@
     photoUploadBtn.classList.add("hidden");
     photoResultBox.classList.add("hidden");
     showScreen("home");
-  });
-
-  document.getElementById("photo-btn-home").addEventListener("click", function () {
-    showScreen("photo-upload");
   });
 
   // ---------- Achievements ----------
